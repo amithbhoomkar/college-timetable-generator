@@ -54,8 +54,9 @@ The scheduling engine is calibrated for engineering institutions with multi-shif
 | Entity | Parameter | Description / Allocation |
 | :--- | :--- | :--- |
 | **Operational Days** | 6 Days | Monday, Tuesday, Wednesday, Thursday, Friday, Saturday |
-| **Daily Periods** | 9 Teaching Slots | `07:30-08:30`, `08:30-09:30`, `09:30-10:30`, `10:30-11:30`, `11:30-12:30`, `12:30-13:30`, `14:30-15:30`, `15:30-16:30`, `16:30-17:30` |
-| **Lunch Break** | 1 Hour Fixed | `13:30-14:30` (Strict institutional pause; no classes or labs allowed) |
+| **Daily Periods** | 9 Teaching Slots | `07:30-08:30`, `08:30-09:30`, `09:30-10:30`, `11:00-12:00`, `12:00-13:00`, `14:00-15:00`, `15:00-16:00`, `16:00-17:00`, `17:00-18:00` |
+| **Short Break** | 30 Mins Fixed | `10:30-11:00` (Morning tea/snack break between Slot 2 and Slot 3) |
+| **Lunch Break** | 1 Hour Fixed | `13:00-14:00` (1:00 to 2:00 PM institutional lunch pause between Slot 4 and Slot 5) |
 | **Departments** | 2 Branches | **ISE** (Information Science & Engg.) & **CSBS** (Computer Science & Business Systems) |
 | **Student Sections** | 13 Sections | **ISE (7)**: `ISE_S3_A`, `ISE_S3_B`, `ISE_S3_C`, `ISE_S5_A`, `ISE_S5_B`, `ISE_S7_A`, `ISE_S7_B`<br>**CSBS (6)**: `CSBS_S1_A`, `CSBS_S1_B`, `CSBS_S3_A`, `CSBS_S3_B`, `CSBS_S5_A`, `CSBS_S7_A` |
 | **Classrooms** | 7 Rooms | `CR_1`, `CR_2`, `CR_3`, `CR_4`, `CR_5`, `CR_6`, `CR_7` |
@@ -83,14 +84,14 @@ Every generated timetable **MUST** satisfy 100% of these hard constraints:
    - A student section cannot attend two simultaneous lectures or labs.
 4. **Consecutive 3-Hour Laboratory Blocks**:
    - Labs must run continuously for exactly 3 periods (duration = 3).
-   - Valid laboratory start slots are strictly restricted to **Slot 0** (`07:30`), **Slot 3** (`10:30`), or **Slot 6** (`14:30`).
-   - Labs **never cross or interrupt the lunch hour** (`13:30–14:30`).
-5. **Lunch Break Invariance**:
-   - Slot `13:30–14:30` is completely excluded from academic scheduling across all departments.
+   - Valid laboratory start slots are strictly restricted to **Slot 0** (`07:30`), **Slot 5** (`14:00`), or **Slot 6** (`15:00`).
+   - Labs **never cross or interrupt the short break or lunch hour** (`10:30–11:00` and `13:00–14:00`).
+5. **Institutional Break Invariance**:
+   - Slots `10:30–11:00` (Short Break) and `13:00–14:00` (1:00 to 2:00 PM Lunch Break) are completely excluded from academic scheduling across all departments.
 6. **Open Elective (OE) Synchronization**:
    - Open Electives for Semesters 5 & 7 across ISE & CSBS are strictly synchronized at **Slot 2 (`09:30–10:30`)** to allow students to attend inter-departmental electives without conflict.
 7. **Physical Education (PE) Combined Sessions**:
-   - PE sessions are scheduled synchronously at **Slot 6 (`14:30–15:30`)** with combined cohort attendance (`ISE_S5_A` + `CSBS_S5_A`, etc.).
+   - PE sessions are scheduled synchronously at **Slot 5 (`14:00–15:00`)** right after lunch with combined cohort attendance (`ISE_S5_A` + `CSBS_S5_A`, etc.).
 8. **Senior Faculty Morning Exemption**:
    - Professors and Associate Professors **cannot** be scheduled for the earliest morning slot (Slot 0: `07:30–08:30`). Only Assistant Professors may take Slot 0.
 9. **Compact Student Daily Shift Restriction**:

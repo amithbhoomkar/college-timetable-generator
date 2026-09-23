@@ -1,26 +1,4 @@
-# ================================================================
-# AGENTIC AI COLLEGE TIMETABLE GENERATOR
-# FINAL VERSION - MONDAY TO SATURDAY
-# ================================================================
-#
-# Departments:
-#   ISE + CSBS
-#
-# Sections:
-#   ISE  : S3 A/B/C, S5 A/B, S7 A/B
-#   CSBS : S1 A/B, S3 A/B, S5 A, S7 A
-#
-# Rooms:
-#   CR_1 ... CR_7
-#   LAB_1, LAB_2
-#
-# Solver:
-#   Google OR-Tools CP-SAT
-#
-# Output:
-#   Complete_Timetable.xlsx
-#
-# ================================================================
+
 
 from ortools.sat.python import cp_model
 from openpyxl import Workbook
@@ -32,9 +10,7 @@ import json
 import time
 
 
-# ================================================================
-# 1. GLOBAL CONFIGURATION
-# ================================================================
+
 
 DAYS = [
     "Monday",
@@ -45,29 +21,29 @@ DAYS = [
     "Saturday"
 ]
 
-# 9 teaching slots/day (13:30-14:30 is the lunch break between slot 5 and 6)
+# 9 teaching slots/day (10:30-11:00 short break, 13:00-14:00 lunch break)
 TIME_SLOTS = [
     "07:30-08:30",
     "08:30-09:30",
     "09:30-10:30",
-    "10:30-11:30",
-    "11:30-12:30",
-    "12:30-13:30",
-    "14:30-15:30",
-    "15:30-16:30",
-    "16:30-17:30"
+    "11:00-12:00",
+    "12:00-13:00",
+    "14:00-15:00",
+    "15:00-16:00",
+    "16:00-17:00",
+    "17:00-18:00"
 ]
 
 TIME_START = [
     "07:30",
     "08:30",
     "09:30",
-    "10:30",
-    "11:30",
-    "12:30",
-    "14:30",
-    "15:30",
-    "16:30"
+    "11:00",
+    "12:00",
+    "14:00",
+    "15:00",
+    "16:00",
+    "17:00"
 ]
 
 NUM_DAYS = len(DAYS)
@@ -94,16 +70,12 @@ NUM_CLASSROOMS = len(CLASSROOMS)
 NUM_LABS = len(LABS)
 
 OE_SLOT = 2       # 09:30-10:30
-PE_SLOT = 6       # 14:30-15:30
+PE_SLOT = 5       # 14:00-15:00
 
 SOLVER_TIME_LIMIT = 180
 
 OUTPUT_FILE = "Complete_Timetable.xlsx"
 
-
-# ================================================================
-# 2. SECTION DEFINITIONS
-# ================================================================
 
 SECTIONS = [
     # ISE
@@ -132,9 +104,7 @@ SECTION_IDS = [x["id"] for x in SECTIONS]
 SECTION_INFO = {x["id"]: x for x in SECTIONS}
 
 
-# ================================================================
-# 3. STAFF
-# ================================================================
+
 
 STAFF = []
 
@@ -166,9 +136,7 @@ MAX_SUBJECTS_PER_STAFF = 3
 MAX_SECTIONS_PER_STAFF = 3
 
 
-# ================================================================
-# 4. SUBJECT DATABASE
-# ================================================================
+
 
 SUBJECTS = {
     "ISE": {
@@ -452,8 +420,9 @@ class ConstraintAgent:
         print("  7 classrooms")
         print("  2 labs")
         print("  OE at 09:30")
-        print("  PE at 14:30")
-        print("  Lunch 13:30-14:30")
+        print("  Short Break 10:30-11:00")
+        print("  Lunch 13:00-14:00 (1:00 to 2:00)")
+        print("  PE at 14:00")
         print("  Lab duration = 3 consecutive hours")
         print("  No room collision")
         print("  No teacher collision")
@@ -597,7 +566,7 @@ class SolverAgent:
             elif e["type"] == "PE":
                 m_sched.Add(slot[i] == PE_SLOT)
             elif e["type"] == "LAB":
-                valid_starts = [d * NUM_SLOTS + s for d in range(NUM_DAYS) for s in [0, 3, 6]]
+                valid_starts = [d * NUM_SLOTS + s for d in range(NUM_DAYS) for s in [0, 5, 6]]
                 m_sched.AddAllowedAssignments([start[i]], [[v] for v in valid_starts])
 
         # Section non-overlap
@@ -838,21 +807,20 @@ class ValidatorAgent:
                 if e["slot"] != PE_SLOT:
 
                     errors.append(
-                        f"PE {e['id']} is not at 14:30"
+                        f"PE {e['id']} is not at {TIME_SLOTS[PE_SLOT]}"
                     )
 
         # --------------------------------------------------------
-        # LUNCH VALIDATION
+        # BREAK & LUNCH VALIDATION
         # --------------------------------------------------------
 
-        # Lunch is 13:30-14:30 (between slot 5: 12:30-13:30 and slot 6: 14:30-15:30).
-        # No class is ever scheduled between 13:30 and 14:30 because TIME_SLOTS skips this period.
+        # Short Break is 10:30-11:00 (between slot 2: 09:30-10:30 and slot 3: 11:00-12:00).
+        # Lunch Break is 13:00-14:00 (between slot 4: 12:00-13:00 and slot 5: 14:00-15:00).
+        # Valid 3-hour lab start slots are 0 (07:30-10:30), 5 (14:00-17:00), or 6 (15:00-18:00).
         for e in timetable:
             if e["type"] == "LAB":
-                # Labs are 3 hours, valid slots are 0, 3, 6.
-                # Slot 0 ends at 10:30, Slot 3 ends at 13:30, Slot 6 starts at 14:30.
-                if e["slot"] not in [0, 3, 6]:
-                    errors.append(f"Lab {e['id']} crosses lunch or invalid block: slot {e['slot']}")
+                if e["slot"] not in [0, 5, 6]:
+                    errors.append(f"Lab {e['id']} crosses break/lunch or invalid block: slot {e['slot']}")
 
         # --------------------------------------------------------
         # SENIOR STAFF 07:30 VALIDATION
@@ -999,6 +967,11 @@ class ExcelGenerator:
             fgColor="D9E1F2"
         )
 
+        self.break_fill = PatternFill(
+            "solid",
+            fgColor="FFF2CC"
+        )
+
         self.header_font = Font(
             bold=True,
             color="FFFFFF"
@@ -1075,9 +1048,24 @@ class ExcelGenerator:
 
         for s in range(NUM_SLOTS):
 
-            # Insert Lunch Break banner between slot 5 (12:30-13:30) and slot 6 (14:30-15:30)
-            if s == 6:
-                ws.cell(row=current_row, column=1, value="13:30-14:30").font = self.bold_font
+            # Insert Short Break banner between slot 2 (09:30-10:30) and slot 3 (11:00-12:00)
+            if s == 3:
+                ws.cell(row=current_row, column=1, value="10:30-11:00").font = self.bold_font
+                ws.cell(row=current_row, column=1).alignment = self.center
+                ws.cell(row=current_row, column=1).border = self.thin_border
+                ws.cell(row=current_row, column=1).fill = self.break_fill
+
+                for d in range(NUM_DAYS):
+                    cell = ws.cell(row=current_row, column=d + 2, value="SHORT BREAK")
+                    cell.alignment = self.center
+                    cell.border = self.thin_border
+                    cell.fill = self.break_fill
+                    cell.font = self.bold_font
+                current_row += 1
+
+            # Insert Lunch Break banner between slot 4 (12:00-13:00) and slot 5 (14:00-15:00)
+            if s == 5:
+                ws.cell(row=current_row, column=1, value="13:00-14:00").font = self.bold_font
                 ws.cell(row=current_row, column=1).alignment = self.center
                 ws.cell(row=current_row, column=1).border = self.thin_border
                 ws.cell(row=current_row, column=1).fill = self.lunch_fill
