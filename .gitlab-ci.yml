@@ -1,0 +1,49 @@
+stages:
+  - build
+  - test
+  - deploy
+
+default:
+  image: python:3.11-slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip/
+
+install_dependencies:
+  stage: build
+  script:
+    - pip install --upgrade pip
+    - pip install -r requirements.txt
+
+generate_and_validate:
+  stage: test
+  script:
+    - pip install -r requirements.txt
+    - python run_all.py
+  artifacts:
+    name: "college-timetable-$CI_COMMIT_REF_NAME"
+    paths:
+      - Complete_Timetable.xlsx
+      - Teacher_Workload_Sheet.xlsx
+      - Timetable_Viewer.html
+      - Timetable_Exports/
+      - Timetable_CSVs/
+      - Timetable_Text_Views/
+      - ALL_TIMETABLES.md
+    expire_in: 30 days
+
+# Optional: Host interactive viewer using GitLab Pages
+pages:
+  stage: deploy
+  script:
+    - mkdir -p public
+    - cp Timetable_Viewer.html public/index.html
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH

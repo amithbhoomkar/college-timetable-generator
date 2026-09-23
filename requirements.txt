@@ -1,0 +1,8 @@
+# Agentic AI College Timetable Generator Dependencies
+# Python 3.9+ recommended
+
+# Google OR-Tools CP-SAT Solver for discrete optimization and constraint satisfaction
+ortools>=9.8.0
+
+# OpenPyXL for reading, writing, and styling Microsoft Excel (.xlsx) workbooks
+openpyxl>=3.1.2
