@@ -6,11 +6,16 @@ from collections import defaultdict
 def generate_html():
     wb = openpyxl.load_workbook("Complete_Timetable.xlsx")
 
-    # Extract all section data
+    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    academic_slots = [
+        "08:30-09:30", "09:30-10:30",
+        "11:00-11:50", "11:50-12:40", "12:40-13:30",
+        "14:30-15:30", "15:30-16:30", "16:30-17:30"
+    ]
+
+    # 1. Extract all section data
     section_names = [s for s in wb.sheetnames if s.startswith("ISE_S") or s.startswith("CSBS_S")]
     sections_data = {}
-
-    days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 
     for s_name in section_names:
         ws = wb[s_name]
@@ -39,7 +44,7 @@ def generate_html():
             })
         sections_data[s_name] = rows
 
-    # Extract Staff data
+    # 2. Extract Staff data and build weekly grids
     staff_ws = wb["STAFF_TIMETABLE"]
     staff_data = {}
     staff_dict = defaultdict(lambda: {
@@ -56,6 +61,8 @@ def generate_html():
         'sections': set()
     })
 
+    # Prepare slot grids for each staff member
+    staff_raw_events = defaultdict(list)
     for r in range(2, staff_ws.max_row + 1):
         row_vals = [staff_ws.cell(row=r, column=c).value for c in range(1, 9)]
         teacher = str(row_vals[0])
@@ -80,6 +87,7 @@ def generate_html():
             "room": room,
             "type": ev_type
         })
+        staff_raw_events[teacher].append((day, time_slot, subject, section, room, ev_type))
 
         d = staff_dict[teacher]
         d['name'] = teacher
@@ -132,22 +140,84 @@ def generate_html():
             "sections": sorted(list(d['sections']))
         })
 
-    # Extract Room utilization data
+    # Build staff weekly schedule grids
+    staff_grids = {}
+    for teacher, events in staff_raw_events.items():
+        slot_map = {s: {d: "FREE" for d in days} for s in academic_slots}
+        for day, time_slot, subject, section, room, ev_type in events:
+            text = f"{subject}\n[{ev_type}]\n{section}\n{room}"
+            if ev_type == 'LAB':
+                span = ["11:00-11:50", "11:50-12:40", "12:40-13:30"] if time_slot.startswith("11:00") else ["14:30-15:30", "15:30-16:30", "16:30-17:30"]
+                for s in span:
+                    slot_map[s][day] = text
+            elif time_slot in slot_map:
+                slot_map[time_slot][day] = text
+
+        rows = [
+            {"time": "08:30-09:30", "is_break": False, "break_type": "", "days": [slot_map["08:30-09:30"][d] for d in days]},
+            {"time": "09:30-10:30", "is_break": False, "break_type": "", "days": [slot_map["09:30-10:30"][d] for d in days]},
+            {"time": "10:30-11:00", "is_break": True, "break_type": "BREAK", "days": ["SHORT BREAK"] * 6},
+            {"time": "11:00-11:50", "is_break": False, "break_type": "", "days": [slot_map["11:00-11:50"][d] for d in days]},
+            {"time": "11:50-12:40", "is_break": False, "break_type": "", "days": [slot_map["11:50-12:40"][d] for d in days]},
+            {"time": "12:40-13:30", "is_break": False, "break_type": "", "days": [slot_map["12:40-13:30"][d] for d in days]},
+            {"time": "13:30-14:30", "is_break": True, "break_type": "LUNCH", "days": ["LUNCH BREAK"] * 6},
+            {"time": "14:30-15:30", "is_break": False, "break_type": "", "days": [slot_map["14:30-15:30"][d] for d in days]},
+            {"time": "15:30-16:30", "is_break": False, "break_type": "", "days": [slot_map["15:30-16:30"][d] for d in days]},
+            {"time": "16:30-17:30", "is_break": False, "break_type": "", "days": [slot_map["16:30-17:30"][d] for d in days]},
+        ]
+        staff_grids[teacher] = rows
+
+    # 3. Extract Room utilization data and build weekly grids
     room_ws = wb["ROOM_UTILIZATION"]
     room_data = defaultdict(list)
+    room_raw_events = defaultdict(list)
     for r in range(2, room_ws.max_row + 1):
         row_vals = [room_ws.cell(row=r, column=c).value for c in range(1, 8)]
         room_name = str(row_vals[0])
-        room_data[room_name].append({
-            "day": str(row_vals[1]),
-            "time": str(row_vals[2]),
-            "subject": str(row_vals[3]),
-            "section": str(row_vals[4]),
-            "teacher": str(row_vals[5]),
-            "type": str(row_vals[6])
-        })
+        day = str(row_vals[1])
+        time_slot = str(row_vals[2])
+        subject = str(row_vals[3])
+        section = str(row_vals[4])
+        teacher = str(row_vals[5])
+        ev_type = str(row_vals[6])
 
-    # Extract Department masters
+        room_data[room_name].append({
+            "day": day,
+            "time": time_slot,
+            "subject": subject,
+            "section": section,
+            "teacher": teacher,
+            "type": ev_type
+        })
+        room_raw_events[room_name].append((day, time_slot, subject, section, teacher, ev_type))
+
+    room_grids = {}
+    for room_name, events in room_raw_events.items():
+        slot_map = {s: {d: "FREE" for d in days} for s in academic_slots}
+        for day, time_slot, subject, section, teacher, ev_type in events:
+            text = f"{subject}\n[{ev_type}]\n{section}\n{teacher}"
+            if ev_type == 'LAB':
+                span = ["11:00-11:50", "11:50-12:40", "12:40-13:30"] if time_slot.startswith("11:00") else ["14:30-15:30", "15:30-16:30", "16:30-17:30"]
+                for s in span:
+                    slot_map[s][day] = text
+            elif time_slot in slot_map:
+                slot_map[time_slot][day] = text
+
+        rows = [
+            {"time": "08:30-09:30", "is_break": False, "break_type": "", "days": [slot_map["08:30-09:30"][d] for d in days]},
+            {"time": "09:30-10:30", "is_break": False, "break_type": "", "days": [slot_map["09:30-10:30"][d] for d in days]},
+            {"time": "10:30-11:00", "is_break": True, "break_type": "BREAK", "days": ["SHORT BREAK"] * 6},
+            {"time": "11:00-11:50", "is_break": False, "break_type": "", "days": [slot_map["11:00-11:50"][d] for d in days]},
+            {"time": "11:50-12:40", "is_break": False, "break_type": "", "days": [slot_map["11:50-12:40"][d] for d in days]},
+            {"time": "12:40-13:30", "is_break": False, "break_type": "", "days": [slot_map["12:40-13:30"][d] for d in days]},
+            {"time": "13:30-14:30", "is_break": True, "break_type": "LUNCH", "days": ["LUNCH BREAK"] * 6},
+            {"time": "14:30-15:30", "is_break": False, "break_type": "", "days": [slot_map["14:30-15:30"][d] for d in days]},
+            {"time": "15:30-16:30", "is_break": False, "break_type": "", "days": [slot_map["15:30-16:30"][d] for d in days]},
+            {"time": "16:30-17:30", "is_break": False, "break_type": "", "days": [slot_map["16:30-17:30"][d] for d in days]},
+        ]
+        room_grids[room_name] = rows
+
+    # 4. Extract Department masters
     dept_data = {}
     for d_name in ["ISE_MASTER", "CSBS_MASTER"]:
         d_ws = wb[d_name]
@@ -170,8 +240,10 @@ def generate_html():
     data_bundle = {
         "sections": sections_data,
         "staff": staff_data,
+        "staff_grids": staff_grids,
         "workload": workload_data,
         "rooms": room_data,
+        "room_grids": room_grids,
         "departments": dept_data,
         "days": days
     }
@@ -299,52 +371,53 @@ def generate_html():
       width: 100%;
     }}
 
+    /* Nav Tabs */
     .nav-tabs {{
       display: flex;
-      gap: 0.4rem;
-      background: rgba(15, 23, 42, 0.6);
-      padding: 0.35rem;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
+      gap: 0.5rem;
       margin-bottom: 1.25rem;
-      width: fit-content;
-      flex-wrap: wrap;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+      overflow-x: auto;
     }}
 
     .tab-btn {{
       padding: 0.55rem 1.25rem;
-      border-radius: 8px;
+      border-radius: 20px;
       background: transparent;
-      border: none;
       color: var(--text-muted);
-      font-weight: 500;
-      font-size: 0.875rem;
+      font-weight: 600;
+      font-size: 0.88rem;
+      border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
     }}
 
     .tab-btn:hover {{
       color: var(--text);
+      background: rgba(255, 255, 255, 0.05);
     }}
 
     .tab-btn.active {{
       background: var(--primary);
       color: white;
-      box-shadow: 0 2px 10px var(--primary-glow);
+      border-color: var(--primary-dark);
+      box-shadow: 0 4px 12px var(--primary-glow);
     }}
 
+    /* Controls Bar */
     .controls-bar {{
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 0.85rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.25rem;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      padding: 0.85rem 1.25rem;
+      border-radius: 12px;
+      gap: 1rem;
       flex-wrap: wrap;
-      gap: 0.85rem;
     }}
 
     .select-group {{
@@ -354,138 +427,160 @@ def generate_html():
     }}
 
     .select-group label {{
-      font-size: 0.875rem;
+      font-size: 0.88rem;
+      font-weight: 600;
       color: var(--text-muted);
-      font-weight: 500;
     }}
 
     select {{
-      background: #1e293b;
-      color: white;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.5rem 1.1rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--card-border);
+      color: var(--text);
+      padding: 0.45rem 1rem;
       border-radius: 8px;
-      font-size: 0.875rem;
+      font-size: 0.88rem;
       outline: none;
       cursor: pointer;
-    }}
-    select:focus {{
-      border-color: var(--primary);
-      box-shadow: 0 0 0 2px var(--primary-glow);
+      transition: border-color 0.2s ease;
+      min-width: 200px;
     }}
 
+    select:focus {{
+      border-color: var(--primary);
+    }}
+
+    /* Legend */
     .legend {{
       display: flex;
-      gap: 0.85rem;
+      gap: 0.9rem;
+      align-items: center;
       flex-wrap: wrap;
-      font-size: 0.78rem;
     }}
+
     .legend-item {{
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      color: var(--text-muted);
     }}
+
     .legend-box {{
-      width: 11px;
-      height: 11px;
+      width: 12px;
+      height: 12px;
       border-radius: 3px;
     }}
 
+    /* Timetable Table Styles */
     .timetable-wrapper {{
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 12px;
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     }}
 
     .table-responsive {{
       overflow-x: auto;
+      width: 100%;
     }}
 
     table {{
       width: 100%;
-      border-collapse: collapse;
-      text-align: center;
+      border-collapse: separate;
+      border-spacing: 0;
+      text-align: left;
     }}
 
     th {{
-      background: #1e293b;
-      color: #93c5fd;
-      font-family: 'Outfit', sans-serif;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
       font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      font-size: 0.82rem;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
+      font-size: 0.78rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      padding: 0.75rem 0.65rem;
+      border-bottom: 1px solid var(--card-border);
+      border-right: 1px solid rgba(255, 255, 255, 0.04);
+      white-space: nowrap;
+    }}
+
+    th:first-child {{
+      width: 120px;
+      text-align: center;
     }}
 
     td {{
-      padding: 0.55rem 0.45rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      border-right: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.78rem;
+      padding: 0.45rem 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      border-right: 1px solid rgba(255, 255, 255, 0.04);
       vertical-align: middle;
-      min-width: 150px;
+      font-size: 0.8rem;
+      min-width: 155px;
     }}
 
     td.time-col {{
-      background: #1e293b;
-      color: #f1f5f9;
-      font-family: 'Outfit', sans-serif;
+      font-family: monospace;
+      font-size: 0.75rem;
       font-weight: 600;
-      font-size: 0.8rem;
-      min-width: 115px;
+      color: #93c5fd;
+      background: rgba(15, 23, 42, 0.6);
+      text-align: center;
+      width: 120px;
+      min-width: 120px;
     }}
 
+    /* Event Card in Cell */
     .event-card {{
-      padding: 0.45rem 0.45rem;
-      border-radius: 6px;
-      text-align: left;
-      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 8px;
+      padding: 0.45rem 0.55rem;
       position: relative;
       display: flex;
       flex-direction: column;
       gap: 0.2rem;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.2s ease;
+      min-height: 58px;
     }}
 
     .event-card:hover {{
       transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      background: rgba(255, 255, 255, 0.08);
     }}
 
     .event-card.THEORY {{
       border-left: 3px solid var(--accent-theory);
-      background: rgba(99, 102, 241, 0.09);
+      background: rgba(99, 102, 241, 0.08);
     }}
+
     .event-card.LAB {{
       border-left: 3px solid var(--accent-lab);
-      background: rgba(6, 182, 212, 0.09);
+      background: rgba(6, 182, 212, 0.08);
     }}
+
     .event-card.OE {{
       border-left: 3px solid var(--accent-oe);
-      background: rgba(245, 158, 11, 0.09);
+      background: rgba(245, 158, 11, 0.08);
     }}
+
     .event-card.PE {{
       border-left: 3px solid var(--accent-pe);
-      background: rgba(16, 185, 129, 0.09);
+      background: rgba(16, 185, 129, 0.08);
     }}
 
     .ev-badge {{
-      display: inline-block;
+      align-self: flex-start;
       font-size: 0.62rem;
       font-weight: 700;
-      padding: 0.08rem 0.35rem;
+      padding: 0.1rem 0.35rem;
       border-radius: 4px;
-      width: fit-content;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }}
+
     .badge-theory {{ background: rgba(99, 102, 241, 0.25); color: #a5b4fc; }}
     .badge-lab {{ background: rgba(6, 182, 212, 0.25); color: #67e8f9; }}
     .badge-oe {{ background: rgba(245, 158, 11, 0.25); color: #fde68a; }}
@@ -493,7 +588,8 @@ def generate_html():
 
     .ev-title {{
       font-weight: 600;
-      color: #f8fafc;
+      color: var(--text);
+      font-size: 0.76rem;
       line-height: 1.2;
     }}
 
@@ -519,6 +615,7 @@ def generate_html():
       font-size: 0.75rem;
       padding: 0.45rem;
       text-transform: uppercase;
+      text-align: center;
     }}
 
     .break-row td {{
@@ -529,6 +626,7 @@ def generate_html():
       font-size: 0.75rem;
       padding: 0.45rem;
       text-transform: uppercase;
+      text-align: center;
     }}
 
     /* Stat Cards for Workload */
@@ -567,17 +665,56 @@ def generate_html():
       font-weight: 500;
     }}
 
+    /* Info Banner for Specific Selection */
+    .view-info-banner {{
+      background: rgba(37, 99, 235, 0.1);
+      border: 1px solid rgba(37, 99, 235, 0.25);
+      border-radius: 10px;
+      padding: 0.75rem 1.25rem;
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }}
+    .view-info-banner .title {{
+      font-weight: 700;
+      font-size: 1rem;
+      color: #93c5fd;
+    }}
+    .view-info-banner .sub {{
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }}
+
     /* List Table Styles */
+    .list-table {{
+      width: 100%;
+      border-collapse: collapse;
+    }}
     .list-table th {{
       text-align: left;
+      padding: 0.65rem 0.75rem;
+      font-size: 0.75rem;
+      background: rgba(15, 23, 42, 0.95);
+      color: var(--text-muted);
     }}
     .list-table td {{
       text-align: left;
       min-width: unset;
-      padding: 0.65rem 0.85rem;
+      padding: 0.6rem 0.75rem;
+      font-size: 0.78rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }}
     .list-table tr:hover td {{
       background: rgba(255, 255, 255, 0.02);
+    }}
+    .list-table tfoot td {{
+      background: rgba(15, 23, 42, 0.98);
+      font-weight: 700;
+      color: #f8fafc;
+      border-top: 2px solid rgba(255, 255, 255, 0.2);
     }}
 
     .badge-load {{
@@ -618,14 +755,16 @@ def generate_html():
       .print-header-banner {{
         display: block !important;
         text-align: center;
+        margin-bottom: 4px;
+      }}
+      #printBannerTitle {{
         font-family: 'Outfit', sans-serif;
         font-size: 13pt;
         font-weight: 700;
         color: #1e3a8a;
-        margin-bottom: 4px;
         letter-spacing: -0.3px;
       }}
-      .print-header-banner span {{
+      #printSubtitle {{
         display: block;
         font-size: 8pt;
         font-weight: normal;
@@ -718,6 +857,9 @@ def generate_html():
         color: #94a3b8 !important;
         font-size: 6.5pt !important;
       }}
+      .view-info-banner {{
+        display: none !important;
+      }}
     }}
   </style>
 </head>
@@ -736,8 +878,8 @@ def generate_html():
 
   <div class="main-container">
     <div class="print-header-banner" id="printBanner">
-      COLLEGE OF ENGINEERING — ACADEMIC TIMETABLE
-      <span id="printSubtitle">ISE & CSBS Departments | Conflict-Free Schedule</span>
+      <div id="printBannerTitle">COLLEGE OF ENGINEERING — ACADEMIC TIMETABLE</div>
+      <div id="printSubtitle">ISE & CSBS Departments | Conflict-Free Schedule</div>
     </div>
 
     <div class="nav-tabs">
@@ -792,11 +934,13 @@ def generate_html():
       const label = document.getElementById('selectorLabel');
       const statsArea = document.getElementById('statsArea');
       const controlsBar = document.getElementById('controlsBar');
+      const legendArea = document.getElementById('legendArea');
       select.innerHTML = '';
 
       if (mode === 'section') {{
         controlsBar.style.display = 'flex';
         statsArea.style.display = 'none';
+        legendArea.style.display = 'flex';
         label.textContent = 'Select Section:';
         Object.keys(data.sections).forEach(sec => {{
           const opt = document.createElement('option');
@@ -804,10 +948,10 @@ def generate_html():
           opt.textContent = sec;
           select.appendChild(opt);
         }});
-        document.getElementById('legendArea').style.display = 'flex';
       }} else if (mode === 'workload') {{
         controlsBar.style.display = 'flex';
         statsArea.style.display = 'block';
+        legendArea.style.display = 'none';
         label.textContent = 'Filter Designation:';
         ['All Designations', 'Professor', 'Associate Professor', 'Assistant Professor'].forEach(d => {{
           const opt = document.createElement('option');
@@ -815,10 +959,10 @@ def generate_html():
           opt.textContent = d;
           select.appendChild(opt);
         }});
-        document.getElementById('legendArea').style.display = 'none';
       }} else if (mode === 'staff') {{
         controlsBar.style.display = 'flex';
         statsArea.style.display = 'none';
+        legendArea.style.display = 'flex';
         label.textContent = 'Select Faculty:';
         Object.keys(data.staff).sort().forEach(staffName => {{
           const opt = document.createElement('option');
@@ -826,10 +970,10 @@ def generate_html():
           opt.textContent = staffName + ' (' + data.staff[staffName].designation + ')';
           select.appendChild(opt);
         }});
-        document.getElementById('legendArea').style.display = 'none';
       }} else if (mode === 'room') {{
         controlsBar.style.display = 'flex';
         statsArea.style.display = 'none';
+        legendArea.style.display = 'flex';
         label.textContent = 'Select Room:';
         Object.keys(data.rooms).sort().forEach(roomName => {{
           const opt = document.createElement('option');
@@ -837,10 +981,10 @@ def generate_html():
           opt.textContent = roomName;
           select.appendChild(opt);
         }});
-        document.getElementById('legendArea').style.display = 'none';
       }} else if (mode === 'dept') {{
         controlsBar.style.display = 'flex';
         statsArea.style.display = 'none';
+        legendArea.style.display = 'none';
         label.textContent = 'Select Department:';
         Object.keys(data.departments).forEach(dName => {{
           const opt = document.createElement('option');
@@ -848,7 +992,6 @@ def generate_html():
           opt.textContent = dName.replace('_', ' ');
           select.appendChild(opt);
         }});
-        document.getElementById('legendArea').style.display = 'none';
       }}
 
       renderCurrentView();
@@ -858,28 +1001,46 @@ def generate_html():
       const select = document.getElementById('itemSelect');
       const selectedVal = select.value;
       const container = document.getElementById('viewContainer');
-      const banner = document.getElementById('printBanner');
+      const bannerTitle = document.getElementById('printBannerTitle');
       const subtitle = document.getElementById('printSubtitle');
 
+      if (bannerTitle) {{
+        if (currentMode === 'section') {{
+          bannerTitle.textContent = `COLLEGE OF ENGINEERING — TIMETABLE: ${{selectedVal}}`;
+        }} else if (currentMode === 'workload') {{
+          bannerTitle.textContent = `COLLEGE OF ENGINEERING — FACULTY WORKLOAD DISTRIBUTION`;
+        }} else if (currentMode === 'staff') {{
+          bannerTitle.textContent = `FACULTY TIMETABLE — ${{selectedVal}}`;
+        }} else if (currentMode === 'room') {{
+          bannerTitle.textContent = `ROOM OCCUPANCY & UTILIZATION — ${{selectedVal}}`;
+        }} else if (currentMode === 'dept') {{
+          bannerTitle.textContent = `${{selectedVal.replace('_', ' ')}} MASTER TIMETABLE`;
+        }}
+      }}
+
+      if (subtitle) {{
+        if (currentMode === 'section') {{
+          subtitle.textContent = "ISE & CSBS Departments | Monday - Saturday (8:30 AM - 5:30 PM)";
+        }} else if (currentMode === 'workload') {{
+          subtitle.textContent = "AICTE Workload Norms: Prof (12h), Assoc Prof (14h), Asst Prof (16h)";
+        }} else if (currentMode === 'staff') {{
+          subtitle.textContent = "Weekly Schedule | College of Engineering";
+        }} else if (currentMode === 'room') {{
+          subtitle.textContent = "Classroom / Laboratory Weekly Allocation";
+        }} else if (currentMode === 'dept') {{
+          subtitle.textContent = "Full Department Cohort Schedule";
+        }}
+      }}
+
       if (currentMode === 'section') {{
-        banner.innerHTML = `COLLEGE OF ENGINEERING — TIMETABLE: ${{selectedVal}}`;
-        subtitle.textContent = "ISE & CSBS Departments | Monday - Saturday (8:30 AM - 5:30 PM)";
         renderSectionView(selectedVal, container);
       }} else if (currentMode === 'workload') {{
-        banner.innerHTML = `COLLEGE OF ENGINEERING — FACULTY WORKLOAD DISTRIBUTION`;
-        subtitle.textContent = "AICTE Workload Norms: Prof (12h), Assoc Prof (14h), Asst Prof (16h)";
         renderWorkloadView(selectedVal, container);
       }} else if (currentMode === 'staff') {{
-        banner.innerHTML = `FACULTY TIMETABLE — ${{selectedVal}}`;
-        subtitle.textContent = "Weekly Schedule | College of Engineering";
         renderStaffView(selectedVal, container);
       }} else if (currentMode === 'room') {{
-        banner.innerHTML = `ROOM OCCUPANCY & UTILIZATION — ${{selectedVal}}`;
-        subtitle.textContent = "Classroom / Laboratory Weekly Allocation";
         renderRoomView(selectedVal, container);
       }} else if (currentMode === 'dept') {{
-        banner.innerHTML = `${{selectedVal.replace('_', ' ')}} MASTER TIMETABLE`;
-        subtitle.textContent = "Full Department Cohort Schedule";
         renderDeptView(selectedVal, container);
       }}
     }}
@@ -891,32 +1052,42 @@ def generate_html():
         filtered = data.workload.filter(w => w.designation === filterVal);
       }}
 
-      const totalFaculty = data.workload.length;
-      const totalHours = data.workload.reduce((a, b) => a + b.tot_hrs, 0);
-      const totalTarget = data.workload.reduce((a, b) => a + b.target_hrs, 0);
-      const avgLoad = (totalHours / totalFaculty).toFixed(1);
+      const totalFaculty = filtered.length;
+      const totalHours = filtered.reduce((a, b) => a + b.tot_hrs, 0);
+      const totalTarget = filtered.reduce((a, b) => a + b.target_hrs, 0);
+      const totalTheory = filtered.reduce((a, b) => a + b.theory_hrs, 0);
+      const totalLabSessions = filtered.reduce((a, b) => a + b.lab_sessions, 0);
+      const totalLabHours = filtered.reduce((a, b) => a + b.lab_hrs, 0);
+      const totalOE = filtered.reduce((a, b) => a + b.oe_hrs, 0);
+      const totalPE = filtered.reduce((a, b) => a + b.pe_hrs, 0);
+      const avgLoad = totalFaculty > 0 ? (totalHours / totalFaculty).toFixed(1) : 0;
+
+      const dayTotals = {{}};
+      data.days.forEach(d => {{
+        dayTotals[d] = filtered.reduce((a, b) => a + (b.days[d] || 0), 0);
+      }});
 
       statsArea.innerHTML = `
         <div class="stat-cards-grid">
           <div class="stat-card">
-            <span class="stat-title">Faculty Hierarchy</span>
+            <span class="stat-title">Faculty Filtered</span>
             <span class="stat-value">${{totalFaculty}}</span>
-            <span class="stat-sub">4 Prof (12h) | 6 Assoc (14h) | 10 Asst (16h)</span>
+            <span class="stat-sub">Hierarchy: 4 Prof | 6 Assoc | 10 Asst</span>
           </div>
           <div class="stat-card">
             <span class="stat-title">Total Workload Assigned</span>
             <span class="stat-value">${{totalHours}} <span style="font-size:1rem;color:var(--text-muted)">hrs/wk</span></span>
-            <span class="stat-sub">Target: ${{totalTarget}}h (Deviation: +1h total)</span>
+            <span class="stat-sub">Target: ${{totalTarget}}h (${{totalHours >= totalTarget ? '+' : ''}}${{totalHours - totalTarget}}h variance)</span>
           </div>
           <div class="stat-card">
             <span class="stat-title">Average Faculty Load</span>
             <span class="stat-value">${{avgLoad}} <span style="font-size:1rem;color:var(--text-muted)">hrs/wk</span></span>
-            <span class="stat-sub">Balanced distribution across 20 staff</span>
+            <span class="stat-sub">AICTE Norms: Prof 12h | Assoc 14h | Asst 16h</span>
           </div>
           <div class="stat-card">
             <span class="stat-title">Lab Limit Compliance</span>
             <span class="stat-value" style="color:#10b981;">100%</span>
-            <span class="stat-sub">Strictly 1 lab/week per class (13 labs total)</span>
+            <span class="stat-sub">Strictly 1 lab/week per section (13 labs total)</span>
           </div>
         </div>
       `;
@@ -924,7 +1095,7 @@ def generate_html():
       let html = `<table class="list-table">
         <thead>
           <tr>
-            <th style="width:40px;">#</th>
+            <th style="width:35px;text-align:center;">#</th>
             <th>Faculty Name</th>
             <th>Designation</th>
             <th style="text-align:center;">Target</th>
@@ -933,7 +1104,12 @@ def generate_html():
             <th style="text-align:center;">Lab</th>
             <th style="text-align:center;">OE</th>
             <th style="text-align:center;">PE</th>
-            <th style="text-align:center;">Daily (M-S)</th>
+            <th style="text-align:center;">Mon</th>
+            <th style="text-align:center;">Tue</th>
+            <th style="text-align:center;">Wed</th>
+            <th style="text-align:center;">Thu</th>
+            <th style="text-align:center;">Fri</th>
+            <th style="text-align:center;">Sat</th>
             <th>Assigned Subjects</th>
             <th>Sections</th>
           </tr>
@@ -941,7 +1117,6 @@ def generate_html():
         <tbody>`;
 
       filtered.forEach((w, idx) => {{
-        const dailyStr = data.days.map(d => w.days[d] || 0).join('-');
         const labStr = w.lab_sessions > 0 ? `${{w.lab_sessions}} (${{w.lab_hrs}}h)` : '-';
         
         let badgeColor = '#60a5fa';
@@ -953,7 +1128,7 @@ def generate_html():
         const assignedBadge = `<span class="badge-load" style="background:${{isExact ? 'rgba(16,185,129,0.25)' : 'rgba(37,99,235,0.25)'}};color:${{isExact ? '#6ee7b7' : '#93c5fd'}};">${{w.tot_hrs}}h</span>`;
 
         html += `<tr>
-          <td style="color:var(--text-muted);font-weight:600;">${{idx + 1}}</td>
+          <td style="color:var(--text-muted);text-align:center;font-weight:600;">${{idx + 1}}</td>
           <td><strong>${{w.name}}</strong></td>
           <td><span style="color:${{badgeColor}};font-size:0.8rem;font-weight:600;">${{w.designation}}</span></td>
           <td style="text-align:center;">${{targetBadge}}</td>
@@ -962,20 +1137,98 @@ def generate_html():
           <td style="text-align:center;"><span style="color:#67e8f9;">${{labStr}}</span></td>
           <td style="text-align:center;">${{w.oe_hrs > 0 ? w.oe_hrs + 'h' : '-'}}</td>
           <td style="text-align:center;">${{w.pe_hrs > 0 ? w.pe_hrs + 'h' : '-'}}</td>
-          <td style="text-align:center;font-family:monospace;color:#94a3b8;">${{dailyStr}}</td>
-          <td><div style="font-size:0.75rem;max-width:300px;line-height:1.3;">${{w.subjects.join(', ')}}</div></td>
-          <td><div style="font-size:0.75rem;max-width:220px;color:#93c5fd;">${{w.sections.join(', ')}}</div></td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Monday'] || 0}}</td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Tuesday'] || 0}}</td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Wednesday'] || 0}}</td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Thursday'] || 0}}</td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Friday'] || 0}}</td>
+          <td style="text-align:center;color:#94a3b8;">${{w.days['Saturday'] || 0}}</td>
+          <td><div style="font-size:0.75rem;max-width:280px;line-height:1.3;">${{w.subjects.join(', ')}}</div></td>
+          <td><div style="font-size:0.75rem;max-width:200px;color:#93c5fd;">${{w.sections.join(', ')}}</div></td>
         </tr>`;
       }});
 
-      html += `</tbody></table>`;
+      html += `</tbody>
+        <tfoot>
+          <tr>
+            <td style="text-align:center;">Σ</td>
+            <td><strong>TOTAL</strong></td>
+            <td style="color:#94a3b8;">${{totalFaculty}} Faculty</td>
+            <td style="text-align:center;"><strong>${{totalTarget}}h</strong></td>
+            <td style="text-align:center;color:#6ee7b7;"><strong>${{totalHours}}h</strong></td>
+            <td style="text-align:center;">${{totalTheory}}h</td>
+            <td style="text-align:center;color:#67e8f9;">${{totalLabSessions > 0 ? `${{totalLabSessions}} (${{totalLabHours}}h)` : '-'}}</td>
+            <td style="text-align:center;">${{totalOE > 0 ? totalOE + 'h' : '-'}}</td>
+            <td style="text-align:center;">${{totalPE > 0 ? totalPE + 'h' : '-'}}</td>
+            <td style="text-align:center;">${{dayTotals['Monday'] || 0}}</td>
+            <td style="text-align:center;">${{dayTotals['Tuesday'] || 0}}</td>
+            <td style="text-align:center;">${{dayTotals['Wednesday'] || 0}}</td>
+            <td style="text-align:center;">${{dayTotals['Thursday'] || 0}}</td>
+            <td style="text-align:center;">${{dayTotals['Friday'] || 0}}</td>
+            <td style="text-align:center;">${{dayTotals['Saturday'] || 0}}</td>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        </tfoot>
+      </table>`;
       container.innerHTML = html;
     }}
 
     function renderSectionView(sectionId, container) {{
       const rows = data.sections[sectionId];
       if (!rows) return;
+      container.innerHTML = buildTimetableGridHtml(rows);
+    }}
 
+    function renderStaffView(staffName, container) {{
+      const rows = data.staff_grids[staffName];
+      const staffInfo = data.staff[staffName];
+      if (!rows || !staffInfo) return;
+
+      const desig = staffInfo.designation;
+      const wItem = data.workload.find(w => w.name === staffName) || {{}};
+      const assigned = wItem.tot_hrs || 0;
+      const target = wItem.target_hrs || 0;
+      const subjects = wItem.subjects ? wItem.subjects.join(', ') : '';
+      const sections = wItem.sections ? wItem.sections.join(', ') : '';
+
+      const banner = `
+        <div class="view-info-banner">
+          <div>
+            <span class="title">👤 ${{staffName}}</span>
+            <span style="margin-left:8px;font-size:0.8rem;background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;">${{desig}}</span>
+            <div class="sub" style="margin-top:4px;">Assigned: <strong style="color:#6ee7b7;">${{assigned}}h</strong> / Target: ${{target}}h | Subjects: ${{subjects}}</div>
+          </div>
+          <div style="font-size:0.82rem;color:#93c5fd;">Cohorts: ${{sections}}</div>
+        </div>
+      `;
+
+      container.innerHTML = banner + buildTimetableGridHtml(rows);
+    }}
+
+    function renderRoomView(roomName, container) {{
+      const rows = data.room_grids[roomName];
+      const events = data.rooms[roomName] || [];
+      if (!rows) return;
+
+      const isLab = roomName.startsWith('LAB');
+      const occupiedPeriods = events.reduce((a, b) => a + (b.type === 'LAB' ? 3 : 1), 0);
+
+      const banner = `
+        <div class="view-info-banner">
+          <div>
+            <span class="title">📍 ${{roomName}}</span>
+            <span style="margin-left:8px;font-size:0.8rem;background:rgba(255,255,255,0.1);padding:2px 8px;border-radius:4px;">${{isLab ? 'Computing Laboratory' : 'Academic Classroom'}}</span>
+            <div class="sub" style="margin-top:4px;">Total Utilization: <strong style="color:#6ee7b7;">${{occupiedPeriods}} Periods/Week</strong> (${{((occupiedPeriods/48)*100).toFixed(1)}}% Occupancy)</div>
+          </div>
+          <div style="font-size:0.82rem;color:#93c5fd;">Active Days: Monday - Saturday</div>
+        </div>
+      `;
+
+      container.innerHTML = banner + buildTimetableGridHtml(rows);
+    }}
+
+    function buildTimetableGridHtml(rows) {{
       let html = `<table>
         <thead>
           <tr>
@@ -1007,8 +1260,8 @@ def generate_html():
             const lines = cellText.split('\\n');
             const sub = lines[0] || '';
             const type = (lines[1] || '').replace('[', '').replace(']', '');
-            const teacher = lines[2] || '';
-            const room = lines[3] || '';
+            const meta1 = lines[2] || '';
+            const meta2 = lines[3] || '';
 
             let badgeClass = 'badge-theory';
             if (type === 'LAB') badgeClass = 'badge-lab';
@@ -1020,8 +1273,8 @@ def generate_html():
                 <span class="ev-badge ${{badgeClass}}">${{type}}</span>
                 <div class="ev-title">${{sub}}</div>
                 <div class="ev-meta">
-                  <span>👤 ${{teacher}}</span>
-                  <span>📍 ${{room}}</span>
+                  <span>${{meta1.startsWith('CR_') || meta1.startsWith('LAB_') ? '📍 ' + meta1 : '👤 ' + meta1}}</span>
+                  <span>${{meta2 ? (meta2.startsWith('CR_') || meta2.startsWith('LAB_') ? '📍 ' + meta2 : '👥 ' + meta2) : ''}}</span>
                 </div>
               </div>
             </td>`;
@@ -1032,99 +1285,32 @@ def generate_html():
       }});
 
       html += `</tbody></table>`;
-      container.innerHTML = html;
-    }}
-
-    function renderStaffView(staffName, container) {{
-      const staffInfo = data.staff[staffName];
-      if (!staffInfo) return;
-
-      const sortedEvents = [...staffInfo.events].sort((a, b) => {{
-        const dayOrder = data.days.indexOf(a.day) - data.days.indexOf(b.day);
-        if (dayOrder !== 0) return dayOrder;
-        return a.time.localeCompare(b.time);
-      }});
-
-      let html = `<table class="list-table">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Subject</th>
-            <th>Section</th>
-            <th>Room</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-      sortedEvents.forEach(e => {{
-        html += `<tr>
-          <td><strong>${{e.day}}</strong></td>
-          <td>${{e.time}}</td>
-          <td><strong>${{e.subject}}</strong></td>
-          <td><span style="color:#60a5fa">${{e.section}}</span></td>
-          <td><span style="color:#34d399">${{e.room}}</span></td>
-          <td><span class="ev-badge badge-${{e.type.toLowerCase()}}">${{e.type}}</span></td>
-        </tr>`;
-      }});
-
-      html += `</tbody></table>`;
-      container.innerHTML = html;
-    }}
-
-    function renderRoomView(roomName, container) {{
-      const events = data.rooms[roomName] || [];
-      const sortedEvents = [...events].sort((a, b) => {{
-        const dayOrder = data.days.indexOf(a.day) - data.days.indexOf(b.day);
-        if (dayOrder !== 0) return dayOrder;
-        return a.time.localeCompare(b.time);
-      }});
-
-      let html = `<table class="list-table">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Subject</th>
-            <th>Section</th>
-            <th>Teacher</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>`;
-
-      sortedEvents.forEach(e => {{
-        html += `<tr>
-          <td><strong>${{e.day}}</strong></td>
-          <td>${{e.time}}</td>
-          <td><strong>${{e.subject}}</strong></td>
-          <td><span style="color:#60a5fa">${{e.section}}</span></td>
-          <td>${{e.teacher}}</td>
-          <td><span class="ev-badge badge-${{e.type.toLowerCase()}}">${{e.type}}</span></td>
-        </tr>`;
-      }});
-
-      html += `</tbody></table>`;
-      container.innerHTML = html;
+      return html;
     }}
 
     function renderDeptView(deptName, container) {{
       const events = data.departments[deptName] || [];
 
-      let html = `<table class="list-table">
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Section</th>
-            <th>Subject</th>
-            <th>Teacher</th>
-            <th>Room</th>
-            <th>Type</th>
-          </tr>
-        </thead>
-        <tbody>`;
+      let html = `
+        <div class="view-info-banner">
+          <div>
+            <span class="title">🏛️ ${{deptName.replace('_', ' ')}}</span>
+            <div class="sub" style="margin-top:4px;">Master Department Roster | Total Academic Events: <strong style="color:#6ee7b7;">${{events.length}}</strong></div>
+          </div>
+        </div>
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Day</th>
+              <th>Time</th>
+              <th>Section</th>
+              <th>Subject</th>
+              <th>Teacher</th>
+              <th>Room</th>
+              <th>Type</th>
+            </tr>
+          </thead>
+          <tbody>`;
 
       events.forEach(e => {{
         html += `<tr>
@@ -1179,7 +1365,7 @@ def generate_html():
     with open("Timetable_Viewer.html", "w", encoding="utf-8") as f:
         f.write(html_template)
 
-    print("Created Timetable_Viewer.html successfully with 1-page PDF print layout and workload targets!")
+    print("Created Timetable_Viewer.html successfully with weekly grids for Sections, Faculty, Rooms, and Workload Table!")
 
 if __name__ == "__main__":
     generate_html()
