@@ -1,0 +1,268 @@
+Teacher,Designation,Day,Time,Subject,Section,Room,Type
+Assistant Professor 1,Assistant Professor,Monday,08:30-09:30,Object Oriented Programming,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Monday,11:00-11:50,Database Management Systems,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Monday,11:50-12:40,Object Oriented Programming,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Monday,15:30-16:30,Data Structures,CSBS_S3_A,CR_3,THEORY
+Assistant Professor 1,Assistant Professor,Tuesday,08:30-09:30,Database Management Systems,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Tuesday,09:30-10:30,Database Management Systems,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Tuesday,11:50-12:40,Object Oriented Programming,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Thursday,09:30-10:30,Database Management Systems,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Thursday,14:30-15:30,Data Structures,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Thursday,16:30-17:30,Object Oriented Programming,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Friday,08:30-09:30,Data Structures,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Friday,09:30-10:30,Data Structures,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Friday,11:00-11:50,Database Management Systems,ISE_S3_A,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Friday,14:30-15:30,Data Structures,CSBS_S3_A,CR_3,THEORY
+Assistant Professor 1,Assistant Professor,Friday,16:30-17:30,Database Management Systems,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Saturday,11:00-11:50,Object Oriented Programming,ISE_S3_B,CR_1,THEORY
+Assistant Professor 1,Assistant Professor,Saturday,14:30-15:30,Data Structures,CSBS_S3_A,CR_2,THEORY
+Assistant Professor 1,Assistant Professor,Saturday,15:30-16:30,Object Oriented Programming,ISE_S3_A,CR_1,THEORY
+Assistant Professor 10,Assistant Professor,Monday,11:00-11:50,Computer Organization,CSBS_S1_A,CR_5,THEORY
+Assistant Professor 10,Assistant Professor,Monday,11:50-12:40,Digital Logic,CSBS_S1_B,CR_6,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,11:00-11:50,Digital Logic,CSBS_S1_A,CR_4,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,11:50-12:40,Computer Organization,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,12:40-13:30,Computer Organization,CSBS_S1_B,CR_2,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,14:30-15:30,Digital Logic,CSBS_S1_A,CR_2,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,15:30-16:30,Digital Logic,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 10,Assistant Professor,Tuesday,16:30-17:30,Digital Logic,CSBS_S1_A,CR_2,THEORY
+Assistant Professor 10,Assistant Professor,Wednesday,08:30-09:30,Computer Organization,CSBS_S1_A,CR_4,THEORY
+Assistant Professor 10,Assistant Professor,Wednesday,11:00-11:50,Programming Fundamentals Lab,CSBS_S1_A,LAB_1,LAB
+Assistant Professor 10,Assistant Professor,Wednesday,14:30-15:30,Computer Organization,CSBS_S1_A,CR_4,THEORY
+Assistant Professor 10,Assistant Professor,Thursday,08:30-09:30,Digital Logic,CSBS_S1_B,CR_3,THEORY
+Assistant Professor 10,Assistant Professor,Thursday,11:00-11:50,Computer Organization,CSBS_S1_B,CR_5,THEORY
+Assistant Professor 10,Assistant Professor,Thursday,14:30-15:30,Programming Fundamentals Lab,CSBS_S1_B,LAB_1,LAB
+Assistant Professor 2,Assistant Professor,Tuesday,08:30-09:30,Database Systems,CSBS_S3_A,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Tuesday,11:50-12:40,Operating Systems,CSBS_S3_A,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Tuesday,12:40-13:30,Database Systems,CSBS_S3_B,CR_3,THEORY
+Assistant Professor 2,Assistant Professor,Tuesday,14:30-15:30,Operating Systems,ISE_S3_C,CR_1,THEORY
+Assistant Professor 2,Assistant Professor,Tuesday,15:30-16:30,Operating Systems,CSBS_S3_B,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Tuesday,16:30-17:30,Database Systems,CSBS_S3_B,CR_3,THEORY
+Assistant Professor 2,Assistant Professor,Wednesday,08:30-09:30,Database Management Systems,ISE_S3_C,CR_1,THEORY
+Assistant Professor 2,Assistant Professor,Wednesday,09:30-10:30,Database Systems,CSBS_S3_A,CR_3,THEORY
+Assistant Professor 2,Assistant Professor,Wednesday,11:00-11:50,Database Systems,CSBS_S3_A,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Wednesday,11:50-12:40,Database Systems,CSBS_S3_B,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Wednesday,12:40-13:30,Operating Systems,CSBS_S3_B,CR_6,THEORY
+Assistant Professor 2,Assistant Professor,Thursday,08:30-09:30,Operating Systems,ISE_S3_C,CR_2,THEORY
+Assistant Professor 2,Assistant Professor,Thursday,11:00-11:50,Database Management Systems,ISE_S3_C,CR_2,THEORY
+Assistant Professor 2,Assistant Professor,Friday,11:50-12:40,Operating Systems,CSBS_S3_A,CR_5,THEORY
+Assistant Professor 2,Assistant Professor,Friday,16:30-17:30,Operating Systems,CSBS_S3_A,CR_4,THEORY
+Assistant Professor 2,Assistant Professor,Saturday,08:30-09:30,Operating Systems,CSBS_S3_B,CR_3,THEORY
+Assistant Professor 2,Assistant Professor,Saturday,11:50-12:40,Operating Systems,ISE_S3_C,CR_2,THEORY
+Assistant Professor 2,Assistant Professor,Saturday,16:30-17:30,Database Management Systems,ISE_S3_C,CR_2,THEORY
+Assistant Professor 3,Assistant Professor,Monday,08:30-09:30,Communication Skills,CSBS_S1_A,CR_4,THEORY
+Assistant Professor 3,Assistant Professor,Monday,12:40-13:30,Communication Skills,CSBS_S1_A,CR_3,THEORY
+Assistant Professor 3,Assistant Professor,Monday,14:30-15:30,Deep Learning Lab,ISE_S7_A,LAB_2,LAB
+Assistant Professor 3,Assistant Professor,Tuesday,11:00-11:50,Communication Skills,CSBS_S1_B,CR_5,THEORY
+Assistant Professor 3,Assistant Professor,Tuesday,15:30-16:30,Engineering Mathematics,CSBS_S1_A,CR_3,THEORY
+Assistant Professor 3,Assistant Professor,Wednesday,09:30-10:30,Communication Skills,CSBS_S1_A,CR_2,THEORY
+Assistant Professor 3,Assistant Professor,Thursday,09:30-10:30,Engineering Mathematics,CSBS_S1_B,CR_2,THEORY
+Assistant Professor 3,Assistant Professor,Thursday,12:40-13:30,Engineering Mathematics,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 3,Assistant Professor,Friday,08:30-09:30,Engineering Mathematics,CSBS_S1_A,CR_3,THEORY
+Assistant Professor 3,Assistant Professor,Friday,11:50-12:40,Engineering Mathematics,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 3,Assistant Professor,Friday,15:30-16:30,Communication Skills,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 3,Assistant Professor,Saturday,11:00-11:50,Communication Skills,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 3,Assistant Professor,Saturday,15:30-16:30,Engineering Mathematics,CSBS_S1_A,CR_5,THEORY
+Assistant Professor 4,Assistant Professor,Tuesday,08:30-09:30,Software Engineering,ISE_S5_A,CR_3,THEORY
+Assistant Professor 4,Assistant Professor,Tuesday,11:00-11:50,Cloud Computing,CSBS_S5_A,CR_7,THEORY
+Assistant Professor 4,Assistant Professor,Tuesday,11:50-12:40,Software Engineering,CSBS_S5_A,CR_7,THEORY
+Assistant Professor 4,Assistant Professor,Tuesday,12:40-13:30,Software Engineering,ISE_S5_B,CR_1,THEORY
+Assistant Professor 4,Assistant Professor,Tuesday,15:30-16:30,Software Engineering,ISE_S5_B,CR_1,THEORY
+Assistant Professor 4,Assistant Professor,Wednesday,08:30-09:30,Cloud Computing,ISE_S5_B,CR_2,THEORY
+Assistant Professor 4,Assistant Professor,Wednesday,11:00-11:50,Cloud Computing,CSBS_S5_A,CR_6,THEORY
+Assistant Professor 4,Assistant Professor,Wednesday,11:50-12:40,Software Engineering,CSBS_S5_A,CR_6,THEORY
+Assistant Professor 4,Assistant Professor,Wednesday,15:30-16:30,Software Engineering,CSBS_S5_A,CR_6,THEORY
+Assistant Professor 4,Assistant Professor,Thursday,11:50-12:40,Software Engineering,ISE_S5_B,CR_3,THEORY
+Assistant Professor 4,Assistant Professor,Thursday,15:30-16:30,Cloud Computing,ISE_S5_B,CR_2,THEORY
+Assistant Professor 4,Assistant Professor,Saturday,08:30-09:30,Cloud Computing,ISE_S5_B,CR_1,THEORY
+Assistant Professor 4,Assistant Professor,Saturday,11:00-11:50,Cloud Computing,CSBS_S5_A,CR_5,THEORY
+Assistant Professor 4,Assistant Professor,Saturday,11:50-12:40,Software Engineering,ISE_S5_A,CR_3,THEORY
+Assistant Professor 4,Assistant Professor,Saturday,15:30-16:30,Software Engineering,ISE_S5_A,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Tuesday,08:30-09:30,Project Management,CSBS_S7_A,CR_6,THEORY
+Assistant Professor 5,Assistant Professor,Tuesday,12:40-13:30,Distributed Systems,CSBS_S7_A,CR_5,THEORY
+Assistant Professor 5,Assistant Professor,Wednesday,08:30-09:30,Project Management,ISE_S7_B,CR_3,THEORY
+Assistant Professor 5,Assistant Professor,Wednesday,11:00-11:50,Project Management,CSBS_S7_A,CR_7,THEORY
+Assistant Professor 5,Assistant Professor,Thursday,08:30-09:30,Distributed Systems,CSBS_S7_A,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Thursday,11:00-11:50,Project Management,ISE_S7_B,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Thursday,16:30-17:30,Distributed Systems,ISE_S7_B,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Friday,11:00-11:50,Distributed Systems,ISE_S7_B,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Friday,12:40-13:30,Project Management,CSBS_S7_A,CR_5,THEORY
+Assistant Professor 5,Assistant Professor,Friday,16:30-17:30,Distributed Systems,ISE_S7_B,CR_3,THEORY
+Assistant Professor 5,Assistant Professor,Saturday,08:30-09:30,Distributed Systems,CSBS_S7_A,CR_4,THEORY
+Assistant Professor 5,Assistant Professor,Saturday,12:40-13:30,Project Management,ISE_S7_B,CR_1,THEORY
+Assistant Professor 5,Assistant Professor,Saturday,14:30-15:30,Machine Learning Lab,ISE_S5_B,LAB_1,LAB
+Assistant Professor 6,Assistant Professor,Monday,11:50-12:40,Deep Learning,ISE_S7_A,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Monday,12:40-13:30,Project Management,ISE_S7_A,CR_2,THEORY
+Assistant Professor 6,Assistant Professor,Monday,15:30-16:30,Natural Language Processing,ISE_S7_B,CR_2,THEORY
+Assistant Professor 6,Assistant Professor,Tuesday,08:30-09:30,Deep Learning,ISE_S7_A,CR_4,THEORY
+Assistant Professor 6,Assistant Professor,Tuesday,09:30-10:30,Natural Language Processing,ISE_S7_A,CR_2,THEORY
+Assistant Professor 6,Assistant Professor,Tuesday,15:30-16:30,Deep Learning,ISE_S7_B,CR_2,THEORY
+Assistant Professor 6,Assistant Professor,Wednesday,11:00-11:50,Deep Learning,ISE_S7_B,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Wednesday,11:50-12:40,Deep Learning,ISE_S7_A,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Wednesday,12:40-13:30,Project Management,ISE_S7_A,CR_5,THEORY
+Assistant Professor 6,Assistant Professor,Wednesday,14:30-15:30,Natural Language Processing,ISE_S7_A,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Thursday,11:00-11:50,Natural Language Processing,ISE_S7_A,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Friday,15:30-16:30,Natural Language Processing,ISE_S7_B,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Saturday,08:30-09:30,Project Management,ISE_S7_A,CR_2,THEORY
+Assistant Professor 6,Assistant Professor,Saturday,11:00-11:50,Natural Language Processing,ISE_S7_B,CR_3,THEORY
+Assistant Professor 6,Assistant Professor,Saturday,14:30-15:30,Deep Learning,ISE_S7_B,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Monday,08:30-09:30,Data Structures,ISE_S3_C,CR_2,THEORY
+Assistant Professor 7,Assistant Professor,Monday,09:30-10:30,Mathematics for Computing,ISE_S3_B,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Monday,14:30-15:30,Data Structures Lab,ISE_S3_C,LAB_1,LAB
+Assistant Professor 7,Assistant Professor,Tuesday,08:30-09:30,Data Structures,ISE_S3_B,CR_2,THEORY
+Assistant Professor 7,Assistant Professor,Tuesday,11:00-11:50,Data Structures,ISE_S3_C,CR_2,THEORY
+Assistant Professor 7,Assistant Professor,Tuesday,14:30-15:30,Data Structures Lab,ISE_S3_B,LAB_1,LAB
+Assistant Professor 7,Assistant Professor,Wednesday,15:30-16:30,Mathematics for Computing,ISE_S3_B,CR_2,THEORY
+Assistant Professor 7,Assistant Professor,Thursday,08:30-09:30,Data Structures,ISE_S3_B,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Thursday,11:00-11:50,Mathematics for Computing,ISE_S3_B,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Thursday,11:50-12:40,Data Structures,ISE_S3_C,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Thursday,12:40-13:30,Data Structures,ISE_S3_B,CR_1,THEORY
+Assistant Professor 7,Assistant Professor,Thursday,14:30-15:30,Mathematics for Computing,ISE_S3_C,CR_3,THEORY
+Assistant Professor 7,Assistant Professor,Saturday,11:00-11:50,Mathematics for Computing,ISE_S3_C,CR_2,THEORY
+Assistant Professor 7,Assistant Professor,Saturday,15:30-16:30,Mathematics for Computing,ISE_S3_C,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Monday,08:30-09:30,Information Security,ISE_S5_B,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Monday,09:30-10:30,Web Technology,ISE_S5_A,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Monday,11:00-11:50,Information Security,ISE_S5_A,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Monday,11:50-12:40,Information Security,ISE_S5_A,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Monday,12:40-13:30,Programming Fundamentals,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 8,Assistant Professor,Tuesday,11:50-12:40,Information Security,ISE_S5_B,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Tuesday,16:30-17:30,Web Technology,ISE_S5_B,CR_1,THEORY
+Assistant Professor 8,Assistant Professor,Wednesday,11:00-11:50,Programming Fundamentals,CSBS_S1_B,CR_4,THEORY
+Assistant Professor 8,Assistant Professor,Wednesday,11:50-12:40,Web Technology,ISE_S5_B,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Wednesday,12:40-13:30,Web Technology,ISE_S5_A,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Wednesday,14:30-15:30,Web Technology,ISE_S5_B,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Wednesday,15:30-16:30,Information Security,ISE_S5_A,CR_3,THEORY
+Assistant Professor 8,Assistant Professor,Thursday,12:40-13:30,Information Security,ISE_S5_B,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Friday,08:30-09:30,Web Technology,ISE_S5_A,CR_2,THEORY
+Assistant Professor 8,Assistant Professor,Friday,11:00-11:50,Programming Fundamentals,CSBS_S1_B,CR_5,THEORY
+Assistant Professor 9,Assistant Professor,Monday,08:30-09:30,Machine Learning,CSBS_S5_A,CR_5,THEORY
+Assistant Professor 9,Assistant Professor,Monday,09:30-10:30,Business Intelligence,CSBS_S5_A,CR_7,OE
+Assistant Professor 9,Assistant Professor,Monday,11:50-12:40,Machine Learning,CSBS_S5_A,CR_7,THEORY
+Assistant Professor 9,Assistant Professor,Monday,12:40-13:30,Cloud Computing,ISE_S5_A,CR_1,THEORY
+Assistant Professor 9,Assistant Professor,Monday,14:30-15:30,Machine Learning,ISE_S5_A,CR_1,THEORY
+Assistant Professor 9,Assistant Professor,Tuesday,11:00-11:50,Machine Learning,ISE_S5_A,CR_3,THEORY
+Assistant Professor 9,Assistant Professor,Wednesday,09:30-10:30,Business Intelligence,CSBS_S7_A,CR_6,OE
+Assistant Professor 9,Assistant Professor,Wednesday,11:00-11:50,Machine Learning,ISE_S5_A,CR_1,THEORY
+Assistant Professor 9,Assistant Professor,Thursday,09:30-10:30,Business Intelligence,CSBS_S7_A,CR_5,OE
+Assistant Professor 9,Assistant Professor,Thursday,11:50-12:40,Cloud Computing,ISE_S5_A,CR_2,THEORY
+Assistant Professor 9,Assistant Professor,Friday,11:00-11:50,Cloud Computing,ISE_S5_A,CR_2,THEORY
+Assistant Professor 9,Assistant Professor,Friday,11:50-12:40,Business Intelligence,CSBS_S7_A,CR_7,THEORY
+Assistant Professor 9,Assistant Professor,Friday,14:30-15:30,Business Intelligence,CSBS_S7_A,CR_4,THEORY
+Assistant Professor 9,Assistant Professor,Friday,15:30-16:30,Machine Learning,CSBS_S5_A,CR_6,THEORY
+Assistant Professor 9,Assistant Professor,Friday,16:30-17:30,Business Intelligence,CSBS_S7_A,CR_6,THEORY
+Assistant Professor 9,Assistant Professor,Saturday,09:30-10:30,Business Intelligence,CSBS_S5_A,CR_4,OE
+Associate Professor 1,Associate Professor,Monday,11:00-11:50,Data Structures Lab,CSBS_S3_B,LAB_1,LAB
+Associate Professor 1,Associate Professor,Monday,14:30-15:30,Computer Networks,CSBS_S3_B,CR_3,THEORY
+Associate Professor 1,Associate Professor,Monday,15:30-16:30,Computer Networks,CSBS_S3_B,CR_4,THEORY
+Associate Professor 1,Associate Professor,Tuesday,11:50-12:40,Computer Networks,CSBS_S3_B,CR_6,THEORY
+Associate Professor 1,Associate Professor,Tuesday,14:30-15:30,Data Structures,CSBS_S3_B,CR_3,THEORY
+Associate Professor 1,Associate Professor,Wednesday,09:30-10:30,Computer Networks,ISE_S3_C,CR_1,THEORY
+Associate Professor 1,Associate Professor,Wednesday,14:30-15:30,Computer Networks,ISE_S3_C,CR_1,THEORY
+Associate Professor 1,Associate Professor,Wednesday,15:30-16:30,Data Structures,CSBS_S3_B,CR_5,THEORY
+Associate Professor 1,Associate Professor,Thursday,11:00-11:50,Data Structures Lab,ISE_S3_A,LAB_1,LAB
+Associate Professor 1,Associate Professor,Thursday,15:30-16:30,Data Structures,CSBS_S3_B,CR_6,THEORY
+Associate Professor 1,Associate Professor,Friday,09:30-10:30,Computer Networks,ISE_S3_C,CR_2,THEORY
+Associate Professor 2,Associate Professor,Monday,11:00-11:50,Data Visualization,CSBS_S5_A,CR_7,THEORY
+Associate Professor 2,Associate Professor,Monday,12:40-13:30,Data Visualization,CSBS_S5_A,CR_5,THEORY
+Associate Professor 2,Associate Professor,Monday,16:30-17:30,Operating Systems,ISE_S3_A,CR_1,THEORY
+Associate Professor 2,Associate Professor,Tuesday,11:00-11:50,Operating Systems,ISE_S3_B,CR_1,THEORY
+Associate Professor 2,Associate Professor,Tuesday,12:40-13:30,Business Analytics,CSBS_S5_A,CR_4,THEORY
+Associate Professor 2,Associate Professor,Wednesday,12:40-13:30,Operating Systems,ISE_S3_A,CR_1,THEORY
+Associate Professor 2,Associate Professor,Wednesday,16:30-17:30,Business Analytics,CSBS_S5_A,CR_4,THEORY
+Associate Professor 2,Associate Professor,Thursday,09:30-10:30,Data Visualization,CSBS_S5_A,CR_3,THEORY
+Associate Professor 2,Associate Professor,Thursday,15:30-16:30,Operating Systems,ISE_S3_A,CR_1,THEORY
+Associate Professor 2,Associate Professor,Friday,12:40-13:30,Business Analytics,CSBS_S5_A,CR_4,THEORY
+Associate Professor 2,Associate Professor,Saturday,15:30-16:30,Operating Systems,ISE_S3_B,CR_2,THEORY
+Associate Professor 2,Associate Professor,Saturday,16:30-17:30,Operating Systems,ISE_S3_B,CR_1,THEORY
+Associate Professor 3,Associate Professor,Monday,09:30-10:30,Artificial Intelligence,ISE_S7_A,CR_6,OE
+Associate Professor 3,Associate Professor,Monday,11:00-11:50,Advanced Database Systems,ISE_S7_B,CR_4,THEORY
+Associate Professor 3,Associate Professor,Monday,16:30-17:30,Advanced Database Systems,ISE_S7_B,CR_2,THEORY
+Associate Professor 3,Associate Professor,Wednesday,09:30-10:30,Artificial Intelligence,ISE_S7_B,CR_5,OE
+Associate Professor 3,Associate Professor,Wednesday,15:30-16:30,Distributed Systems,ISE_S7_A,CR_4,THEORY
+Associate Professor 3,Associate Professor,Thursday,11:50-12:40,Distributed Systems,ISE_S7_A,CR_4,THEORY
+Associate Professor 3,Associate Professor,Thursday,15:30-16:30,Advanced Database Systems,ISE_S7_A,CR_3,THEORY
+Associate Professor 3,Associate Professor,Friday,09:30-10:30,Artificial Intelligence,ISE_S7_A,CR_4,OE
+Associate Professor 3,Associate Professor,Friday,11:00-11:50,Distributed Systems,ISE_S7_A,CR_3,THEORY
+Associate Professor 3,Associate Professor,Friday,11:50-12:40,Advanced Database Systems,ISE_S7_B,CR_2,THEORY
+Associate Professor 3,Associate Professor,Friday,12:40-13:30,Advanced Database Systems,ISE_S7_A,CR_2,THEORY
+Associate Professor 3,Associate Professor,Friday,14:30-15:30,Advanced Database Systems,ISE_S7_A,CR_2,THEORY
+Associate Professor 3,Associate Professor,Saturday,09:30-10:30,Artificial Intelligence,ISE_S7_B,CR_3,OE
+Associate Professor 4,Associate Professor,Monday,11:00-11:50,Object Oriented Programming,ISE_S3_C,CR_2,THEORY
+Associate Professor 4,Associate Professor,Tuesday,09:30-10:30,Probability and Statistics,CSBS_S3_A,CR_3,THEORY
+Associate Professor 4,Associate Professor,Tuesday,11:00-11:50,Probability and Statistics,CSBS_S3_B,CR_6,THEORY
+Associate Professor 4,Associate Professor,Tuesday,11:50-12:40,Object Oriented Programming,ISE_S3_C,CR_2,THEORY
+Associate Professor 4,Associate Professor,Wednesday,12:40-13:30,Object Oriented Programming,ISE_S3_C,CR_2,THEORY
+Associate Professor 4,Associate Professor,Wednesday,16:30-17:30,Probability and Statistics,CSBS_S3_B,CR_3,THEORY
+Associate Professor 4,Associate Professor,Thursday,11:00-11:50,Object Oriented Programming,CSBS_S3_B,CR_6,THEORY
+Associate Professor 4,Associate Professor,Thursday,11:50-12:40,Probability and Statistics,CSBS_S3_A,CR_6,THEORY
+Associate Professor 4,Associate Professor,Thursday,12:40-13:30,Object Oriented Programming,CSBS_S3_A,CR_5,THEORY
+Associate Professor 4,Associate Professor,Thursday,14:30-15:30,Probability and Statistics,CSBS_S3_A,CR_4,THEORY
+Associate Professor 4,Associate Professor,Thursday,16:30-17:30,Probability and Statistics,CSBS_S3_B,CR_5,THEORY
+Associate Professor 4,Associate Professor,Friday,11:50-12:40,Object Oriented Programming,CSBS_S3_B,CR_6,THEORY
+Associate Professor 4,Associate Professor,Friday,12:40-13:30,Object Oriented Programming,CSBS_S3_A,CR_3,THEORY
+Associate Professor 4,Associate Professor,Friday,15:30-16:30,Object Oriented Programming,CSBS_S3_A,CR_5,THEORY
+Associate Professor 4,Associate Professor,Saturday,09:30-10:30,Object Oriented Programming,CSBS_S3_B,CR_2,THEORY
+Associate Professor 5,Associate Professor,Monday,11:00-11:50,Deep Learning Lab,CSBS_S7_A,LAB_2,LAB
+Associate Professor 5,Associate Professor,Tuesday,11:00-11:50,Deep Learning Lab,ISE_S7_B,LAB_1,LAB
+Associate Professor 5,Associate Professor,Wednesday,11:50-12:40,Natural Language Processing,CSBS_S7_A,CR_7,THEORY
+Associate Professor 5,Associate Professor,Thursday,11:50-12:40,Natural Language Processing,CSBS_S7_A,CR_7,THEORY
+Associate Professor 5,Associate Professor,Thursday,12:40-13:30,Natural Language Processing,CSBS_S7_A,CR_6,THEORY
+Associate Professor 5,Associate Professor,Friday,11:00-11:50,Information Security,CSBS_S5_A,CR_6,THEORY
+Associate Professor 5,Associate Professor,Friday,16:30-17:30,Information Security,CSBS_S5_A,CR_5,THEORY
+Associate Professor 5,Associate Professor,Saturday,11:50-12:40,Information Security,CSBS_S5_A,CR_6,THEORY
+Associate Professor 6,Associate Professor,Monday,09:30-10:30,Artificial Intelligence,ISE_S5_B,CR_5,OE
+Associate Professor 6,Associate Professor,Monday,14:30-15:30,Physical Education,ISE_S5_B,CR_4,PE
+Associate Professor 6,Associate Professor,Tuesday,09:30-10:30,Artificial Intelligence,ISE_S5_A,CR_5,OE
+Associate Professor 6,Associate Professor,Tuesday,14:30-15:30,Physical Education,ISE_S5_B,CR_4,PE
+Associate Professor 6,Associate Professor,Wednesday,09:30-10:30,Artificial Intelligence,ISE_S5_B,CR_4,OE
+Associate Professor 6,Associate Professor,Wednesday,14:30-15:30,Physical Education,"ISE_S5_A,CSBS_S5_A",CR_5,PE
+Associate Professor 6,Associate Professor,Thursday,09:30-10:30,Artificial Intelligence,ISE_S5_A,CR_4,OE
+Associate Professor 6,Associate Professor,Thursday,14:30-15:30,Machine Learning Lab,CSBS_S5_A,LAB_2,LAB
+Associate Professor 6,Associate Professor,Friday,14:30-15:30,Machine Learning Lab,ISE_S5_A,LAB_1,LAB
+Associate Professor 6,Associate Professor,Saturday,14:30-15:30,Physical Education,"ISE_S5_A,CSBS_S5_A",CR_3,PE
+Professor 1,Professor,Monday,15:30-16:30,Computer Networks,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Monday,16:30-17:30,Computer Networks,CSBS_S3_A,CR_3,THEORY
+Professor 1,Professor,Wednesday,15:30-16:30,Mathematics for Computing,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Wednesday,16:30-17:30,Computer Networks,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Friday,11:50-12:40,Mathematics for Computing,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Friday,12:40-13:30,Mathematics for Computing,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Friday,14:30-15:30,Computer Networks,ISE_S3_A,CR_1,THEORY
+Professor 1,Professor,Saturday,11:00-11:50,Data Structures Lab,CSBS_S3_A,LAB_1,LAB
+Professor 1,Professor,Saturday,15:30-16:30,Computer Networks,CSBS_S3_A,CR_6,THEORY
+Professor 1,Professor,Saturday,16:30-17:30,Computer Networks,CSBS_S3_A,CR_4,THEORY
+Professor 2,Professor,Monday,09:30-10:30,Programming Fundamentals,CSBS_S1_A,CR_3,THEORY
+Professor 2,Professor,Monday,11:00-11:50,Discrete Mathematics,CSBS_S1_B,CR_6,THEORY
+Professor 2,Professor,Monday,11:50-12:40,Discrete Mathematics,CSBS_S1_A,CR_5,THEORY
+Professor 2,Professor,Monday,14:30-15:30,Discrete Mathematics,CSBS_S1_A,CR_2,THEORY
+Professor 2,Professor,Wednesday,11:50-12:40,Discrete Mathematics,CSBS_S1_B,CR_4,THEORY
+Professor 2,Professor,Thursday,11:50-12:40,Discrete Mathematics,CSBS_S1_B,CR_5,THEORY
+Professor 2,Professor,Thursday,12:40-13:30,Programming Fundamentals,CSBS_S1_A,CR_3,THEORY
+Professor 2,Professor,Thursday,14:30-15:30,Computer Networks,ISE_S3_B,CR_2,THEORY
+Professor 2,Professor,Thursday,15:30-16:30,Programming Fundamentals,CSBS_S1_A,CR_5,THEORY
+Professor 2,Professor,Friday,11:50-12:40,Discrete Mathematics,CSBS_S1_A,CR_3,THEORY
+Professor 2,Professor,Friday,15:30-16:30,Computer Networks,ISE_S3_B,CR_1,THEORY
+Professor 2,Professor,Saturday,11:50-12:40,Computer Networks,ISE_S3_B,CR_1,THEORY
+Professor 3,Professor,Monday,11:50-12:40,Big Data Analytics,ISE_S7_B,CR_4,THEORY
+Professor 3,Professor,Wednesday,11:00-11:50,Machine Learning,ISE_S5_B,CR_2,THEORY
+Professor 3,Professor,Wednesday,11:50-12:40,Data Mining,ISE_S5_A,CR_1,THEORY
+Professor 3,Professor,Wednesday,12:40-13:30,Machine Learning,ISE_S5_B,CR_4,THEORY
+Professor 3,Professor,Thursday,15:30-16:30,Big Data Analytics,ISE_S7_B,CR_4,THEORY
+Professor 3,Professor,Thursday,16:30-17:30,Data Mining,ISE_S5_B,CR_2,THEORY
+Professor 3,Professor,Friday,09:30-10:30,Data Mining,ISE_S5_A,CR_3,THEORY
+Professor 3,Professor,Friday,15:30-16:30,Data Mining,ISE_S5_B,CR_2,THEORY
+Professor 3,Professor,Friday,16:30-17:30,Data Mining,ISE_S5_B,CR_2,THEORY
+Professor 3,Professor,Saturday,09:30-10:30,Machine Learning,ISE_S5_B,CR_1,THEORY
+Professor 3,Professor,Saturday,11:50-12:40,Big Data Analytics,ISE_S7_B,CR_5,THEORY
+Professor 3,Professor,Saturday,16:30-17:30,Data Mining,ISE_S5_A,CR_3,THEORY
+Professor 4,Professor,Monday,09:30-10:30,Big Data Analytics,CSBS_S7_A,CR_4,THEORY
+Professor 4,Professor,Monday,14:30-15:30,Physical Education,ISE_S7_B,CR_5,PE
+Professor 4,Professor,Tuesday,09:30-10:30,Deep Learning,CSBS_S7_A,CR_4,THEORY
+Professor 4,Professor,Tuesday,14:30-15:30,Physical Education,"ISE_S7_A,CSBS_S7_A",CR_5,PE
+Professor 4,Professor,Wednesday,14:30-15:30,Physical Education,ISE_S7_B,CR_6,PE
+Professor 4,Professor,Wednesday,16:30-17:30,Big Data Analytics,ISE_S7_A,CR_2,THEORY
+Professor 4,Professor,Thursday,11:00-11:50,Big Data Analytics,CSBS_S7_A,CR_7,THEORY
+Professor 4,Professor,Thursday,14:30-15:30,Physical Education,"ISE_S7_A,CSBS_S7_A",CR_5,PE
+Professor 4,Professor,Thursday,16:30-17:30,Big Data Analytics,ISE_S7_A,CR_3,THEORY
+Professor 4,Professor,Friday,11:00-11:50,Big Data Analytics,CSBS_S7_A,CR_7,THEORY
+Professor 4,Professor,Friday,15:30-16:30,Deep Learning,CSBS_S7_A,CR_7,THEORY
+Professor 4,Professor,Saturday,11:00-11:50,Deep Learning,CSBS_S7_A,CR_6,THEORY
+Professor 4,Professor,Saturday,11:50-12:40,Big Data Analytics,ISE_S7_A,CR_4,THEORY

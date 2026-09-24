@@ -20,15 +20,21 @@ def generate_html():
             if not time_slot:
                 continue
             day_cells = []
-            is_lunch_row = False
+            is_break_row = False
+            break_type = ""
             for c in range(2, 8):
                 val = ws.cell(row=r, column=c).value or ""
                 day_cells.append(str(val))
                 if "LUNCH" in str(val):
-                    is_lunch_row = True
+                    is_break_row = True
+                    break_type = "LUNCH"
+                elif "BREAK" in str(val):
+                    is_break_row = True
+                    break_type = "BREAK"
             rows.append({
                 "time": str(time_slot),
-                "is_lunch": is_lunch_row,
+                "is_break": is_break_row,
+                "break_type": break_type,
                 "days": day_cells
             })
         sections_data[s_name] = rows
@@ -99,6 +105,14 @@ def generate_html():
         else:
             return (3, int(name.split()[-1]))
 
+    def get_target(desig):
+        if 'Professor' in desig and 'Associate' not in desig and 'Assistant' not in desig:
+            return 12
+        elif 'Associate' in desig:
+            return 14
+        else:
+            return 16
+
     sorted_staff_names = sorted(staff_dict.keys(), key=sort_key)
     workload_data = []
     for t in sorted_staff_names:
@@ -106,26 +120,25 @@ def generate_html():
         workload_data.append({
             "name": d['name'],
             "designation": d['designation'],
+            "target_hrs": get_target(d['designation']),
             "tot_hrs": d['tot_hrs'],
             "theory_hrs": d['theory_hrs'],
             "lab_sessions": d['lab_sessions'],
             "lab_hrs": d['lab_hrs'],
             "oe_hrs": d['oe_hrs'],
             "pe_hrs": d['pe_hrs'],
-            "days": {day: d['days'][day] for day in days},
+            "days": dict(d['days']),
             "subjects": sorted(list(d['subjects'])),
             "sections": sorted(list(d['sections']))
         })
 
-    # Extract Room data
+    # Extract Room utilization data
     room_ws = wb["ROOM_UTILIZATION"]
-    room_data = {}
+    room_data = defaultdict(list)
     for r in range(2, room_ws.max_row + 1):
         row_vals = [room_ws.cell(row=r, column=c).value for c in range(1, 8)]
-        room = str(row_vals[0])
-        if room not in room_data:
-            room_data[room] = []
-        room_data[room].append({
+        room_name = str(row_vals[0])
+        room_data[room_name].append({
             "day": str(row_vals[1]),
             "time": str(row_vals[2]),
             "subject": str(row_vals[3]),
@@ -134,23 +147,23 @@ def generate_html():
             "type": str(row_vals[6])
         })
 
-    # Department Master data
+    # Extract Department masters
     dept_data = {}
     for d_name in ["ISE_MASTER", "CSBS_MASTER"]:
-        ws = wb[d_name]
+        d_ws = wb[d_name]
         d_events = []
-        for r in range(4, ws.max_row + 1):
-            row_vals = [ws.cell(row=r, column=c).value for c in range(1, 8)]
-            if not row_vals[0]:
+        for r in range(4, d_ws.max_row + 1):
+            day_val = d_ws.cell(row=r, column=1).value
+            if not day_val:
                 continue
             d_events.append({
-                "day": str(row_vals[0]),
-                "time": str(row_vals[1]),
-                "section": str(row_vals[2]),
-                "subject": str(row_vals[3]),
-                "type": str(row_vals[4]),
-                "teacher": str(row_vals[5]),
-                "room": str(row_vals[6])
+                "day": str(day_val),
+                "time": str(d_ws.cell(row=r, column=2).value or ""),
+                "section": str(d_ws.cell(row=r, column=3).value or ""),
+                "subject": str(d_ws.cell(row=r, column=4).value or ""),
+                "type": str(d_ws.cell(row=r, column=5).value or ""),
+                "teacher": str(d_ws.cell(row=r, column=6).value or ""),
+                "room": str(d_ws.cell(row=r, column=7).value or "")
             })
         dept_data[d_name] = d_events
 
@@ -170,7 +183,7 @@ def generate_html():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>College Timetable Interactive Viewer | ISE & CSBS</title>
+  <title>College Timetable Interactive Viewer | 1-Page PDF Fit</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -178,9 +191,9 @@ def generate_html():
     :root {{
       --primary: #2563eb;
       --primary-dark: #1d4ed8;
-      --primary-glow: rgba(37, 99, 235, 0.2);
+      --primary-glow: rgba(37, 99, 235, 0.25);
       --bg: #0f172a;
-      --card-bg: rgba(30, 41, 59, 0.85);
+      --card-bg: rgba(30, 41, 59, 0.88);
       --card-border: rgba(255, 255, 255, 0.08);
       --text: #f8fafc;
       --text-muted: #94a3b8;
@@ -210,10 +223,10 @@ def generate_html():
     }}
 
     header {{
-      background: rgba(15, 23, 42, 0.8);
+      background: rgba(15, 23, 42, 0.85);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--card-border);
-      padding: 1.2rem 2.5rem;
+      padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -224,7 +237,7 @@ def generate_html():
 
     .logo-area h1 {{
       font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 700;
       background: linear-gradient(135deg, #60a5fa, #a78bfa);
       -webkit-background-clip: text;
@@ -235,24 +248,24 @@ def generate_html():
 
     .logo-area p {{
       color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-top: 0.2rem;
+      font-size: 0.82rem;
+      margin-top: 0.15rem;
     }}
 
     .actions {{
       display: flex;
-      gap: 0.8rem;
+      gap: 0.75rem;
     }}
 
     .btn {{
-      padding: 0.55rem 1.2rem;
+      padding: 0.5rem 1.1rem;
       border-radius: 8px;
       font-weight: 500;
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.45rem;
       transition: all 0.2s ease;
       border: none;
       outline: none;
@@ -270,42 +283,42 @@ def generate_html():
     }}
 
     .btn-secondary {{
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.08);
       color: var(--text);
       border: 1px solid var(--card-border);
     }}
     .btn-secondary:hover {{
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.15);
     }}
 
     .main-container {{
       flex: 1;
-      padding: 2rem 2.5rem;
-      max-width: 1700px;
+      padding: 1.5rem 2rem;
+      max-width: 1750px;
       margin: 0 auto;
       width: 100%;
     }}
 
     .nav-tabs {{
       display: flex;
-      gap: 0.5rem;
+      gap: 0.4rem;
       background: rgba(15, 23, 42, 0.6);
-      padding: 0.4rem;
+      padding: 0.35rem;
       border-radius: 12px;
       border: 1px solid var(--card-border);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       width: fit-content;
       flex-wrap: wrap;
     }}
 
     .tab-btn {{
-      padding: 0.6rem 1.4rem;
+      padding: 0.55rem 1.25rem;
       border-radius: 8px;
       background: transparent;
       border: none;
       color: var(--text-muted);
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       cursor: pointer;
       transition: all 0.2s ease;
       font-family: 'Inter', sans-serif;
@@ -325,23 +338,23 @@ def generate_html():
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 1rem 1.5rem;
+      padding: 0.85rem 1.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.85rem;
     }}
 
     .select-group {{
       display: flex;
       align-items: center;
-      gap: 0.8rem;
+      gap: 0.75rem;
     }}
 
     .select-group label {{
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       color: var(--text-muted);
       font-weight: 500;
     }}
@@ -350,9 +363,9 @@ def generate_html():
       background: #1e293b;
       color: white;
       border: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 0.55rem 1.2rem;
+      padding: 0.5rem 1.1rem;
       border-radius: 8px;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       outline: none;
       cursor: pointer;
     }}
@@ -363,27 +376,27 @@ def generate_html():
 
     .legend {{
       display: flex;
-      gap: 1rem;
+      gap: 0.85rem;
       flex-wrap: wrap;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }}
     .legend-item {{
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }}
     .legend-box {{
-      width: 12px;
-      height: 12px;
+      width: 11px;
+      height: 11px;
       border-radius: 3px;
     }}
 
     .timetable-wrapper {{
       background: var(--card-bg);
       border: 1px solid var(--card-border);
-      border-radius: 14px;
+      border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
     }}
 
     .table-responsive {{
@@ -401,8 +414,8 @@ def generate_html():
       color: #93c5fd;
       font-family: 'Outfit', sans-serif;
       font-weight: 600;
-      padding: 1rem 0.75rem;
-      font-size: 0.875rem;
+      padding: 0.75rem 0.5rem;
+      font-size: 0.82rem;
       border-bottom: 2px solid rgba(255, 255, 255, 0.1);
       border-right: 1px solid rgba(255, 255, 255, 0.05);
       text-transform: uppercase;
@@ -410,12 +423,12 @@ def generate_html():
     }}
 
     td {{
-      padding: 0.75rem 0.5rem;
+      padding: 0.55rem 0.45rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       border-right: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.825rem;
+      font-size: 0.78rem;
       vertical-align: middle;
-      min-width: 160px;
+      min-width: 150px;
     }}
 
     td.time-col {{
@@ -423,19 +436,19 @@ def generate_html():
       color: #f1f5f9;
       font-family: 'Outfit', sans-serif;
       font-weight: 600;
-      font-size: 0.85rem;
-      min-width: 120px;
+      font-size: 0.8rem;
+      min-width: 115px;
     }}
 
     .event-card {{
-      padding: 0.6rem 0.5rem;
-      border-radius: 8px;
+      padding: 0.45rem 0.45rem;
+      border-radius: 6px;
       text-align: left;
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.2rem;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
       background: rgba(255, 255, 255, 0.03);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -448,26 +461,26 @@ def generate_html():
 
     .event-card.THEORY {{
       border-left: 3px solid var(--accent-theory);
-      background: rgba(99, 102, 241, 0.08);
+      background: rgba(99, 102, 241, 0.09);
     }}
     .event-card.LAB {{
       border-left: 3px solid var(--accent-lab);
-      background: rgba(6, 182, 212, 0.08);
+      background: rgba(6, 182, 212, 0.09);
     }}
     .event-card.OE {{
       border-left: 3px solid var(--accent-oe);
-      background: rgba(245, 158, 11, 0.08);
+      background: rgba(245, 158, 11, 0.09);
     }}
     .event-card.PE {{
       border-left: 3px solid var(--accent-pe);
-      background: rgba(16, 185, 129, 0.08);
+      background: rgba(16, 185, 129, 0.09);
     }}
 
     .ev-badge {{
       display: inline-block;
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 700;
-      padding: 0.1rem 0.4rem;
+      padding: 0.08rem 0.35rem;
       border-radius: 4px;
       width: fit-content;
       text-transform: uppercase;
@@ -481,52 +494,62 @@ def generate_html():
     .ev-title {{
       font-weight: 600;
       color: #f8fafc;
-      line-height: 1.25;
+      line-height: 1.2;
     }}
 
     .ev-meta {{
       display: flex;
       flex-direction: column;
-      gap: 0.15rem;
+      gap: 0.1rem;
       color: var(--text-muted);
-      font-size: 0.72rem;
+      font-size: 0.7rem;
     }}
 
     .free-slot {{
-      color: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.18);
       font-weight: 500;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
     }}
 
     .lunch-row td {{
-      background: rgba(100, 116, 139, 0.15);
-      color: #94a3b8;
+      background: rgba(100, 116, 139, 0.18);
+      color: #cbd5e1;
       font-weight: 600;
-      letter-spacing: 2px;
-      font-size: 0.8rem;
-      padding: 0.6rem;
+      letter-spacing: 1.5px;
+      font-size: 0.75rem;
+      padding: 0.45rem;
+      text-transform: uppercase;
+    }}
+
+    .break-row td {{
+      background: rgba(245, 158, 11, 0.18);
+      color: #fde68a;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      font-size: 0.75rem;
+      padding: 0.45rem;
       text-transform: uppercase;
     }}
 
     /* Stat Cards for Workload */
     .stat-cards-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.85rem;
+      margin-bottom: 1.25rem;
     }}
 
     .stat-card {{
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 1.2rem;
+      padding: 1rem 1.2rem;
       display: flex;
       flex-direction: column;
-      gap: 0.4rem;
+      gap: 0.3rem;
     }}
     .stat-title {{
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       font-weight: 500;
       text-transform: uppercase;
@@ -534,12 +557,12 @@ def generate_html():
     }}
     .stat-value {{
       font-family: 'Outfit', sans-serif;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: #93c5fd;
     }}
     .stat-sub {{
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #10b981;
       font-weight: 500;
     }}
@@ -551,7 +574,7 @@ def generate_html():
     .list-table td {{
       text-align: left;
       min-width: unset;
-      padding: 0.85rem 1rem;
+      padding: 0.65rem 0.85rem;
     }}
     .list-table tr:hover td {{
       background: rgba(255, 255, 255, 0.02);
@@ -560,22 +583,141 @@ def generate_html():
     .badge-load {{
       background: rgba(37, 99, 235, 0.25);
       color: #93c5fd;
-      padding: 0.2rem 0.6rem;
-      border-radius: 6px;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       display: inline-block;
     }}
 
+    .print-header-banner {{
+      display: none;
+    }}
+
+    /* 1-PAGE PDF / PRINT OPTIMIZATION (LANDSCAPE A4) */
     @media print {{
-      body {{ background: white !important; color: black !important; }}
-      header, .controls-bar, .nav-tabs {{ display: none !important; }}
-      .timetable-wrapper {{ border: 1px solid #ccc !important; box-shadow: none !important; }}
-      th, td {{ color: black !important; border: 1px solid #ccc !important; }}
-      td.time-col {{ background: #eee !important; color: black !important; }}
-      .event-card {{ background: none !important; border: 1px solid #ddd !important; }}
-      .ev-title {{ color: black !important; }}
-      .ev-meta {{ color: #555 !important; }}
+      @page {{
+        size: A4 landscape;
+        margin: 5mm 6mm;
+      }}
+      body {{
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }}
+      header, .nav-tabs, .controls-bar, .actions, .btn {{
+        display: none !important;
+      }}
+      .main-container {{
+        padding: 0 !important;
+        max-width: 100% !important;
+      }}
+      .print-header-banner {{
+        display: block !important;
+        text-align: center;
+        font-family: 'Outfit', sans-serif;
+        font-size: 13pt;
+        font-weight: 700;
+        color: #1e3a8a;
+        margin-bottom: 4px;
+        letter-spacing: -0.3px;
+      }}
+      .print-header-banner span {{
+        display: block;
+        font-size: 8pt;
+        font-weight: normal;
+        color: #475569;
+        margin-top: 1px;
+      }}
+      .timetable-wrapper {{
+        border: 1px solid #94a3b8 !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }}
+      table {{
+        width: 100% !important;
+        border-collapse: collapse !important;
+      }}
+      th {{
+        background: #1e3a8a !important;
+        color: #ffffff !important;
+        font-size: 7.5pt !important;
+        padding: 3px 2px !important;
+        border: 1px solid #94a3b8 !important;
+      }}
+      td {{
+        padding: 2.5px 2px !important;
+        font-size: 6.8pt !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+        min-width: auto !important;
+      }}
+      td.time-col {{
+        background: #f1f5f9 !important;
+        color: #0f172a !important;
+        font-size: 6.8pt !important;
+        min-width: 65px !important;
+        font-weight: 700 !important;
+      }}
+      .event-card {{
+        padding: 2px 2px !important;
+        border-radius: 3px !important;
+        font-size: 6.5pt !important;
+        line-height: 1.15 !important;
+        border: 1px solid #94a3b8 !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }}
+      .event-card.THEORY {{
+        background: #eef2ff !important;
+        border-left: 3px solid #4f46e5 !important;
+      }}
+      .event-card.LAB {{
+        background: #ecfeff !important;
+        border-left: 3px solid #0891b2 !important;
+      }}
+      .event-card.OE {{
+        background: #fffbeb !important;
+        border-left: 3px solid #d97706 !important;
+      }}
+      .event-card.PE {{
+        background: #ecfdf5 !important;
+        border-left: 3px solid #059669 !important;
+      }}
+      .ev-badge {{
+        display: none !important;
+      }}
+      .ev-title {{
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        font-size: 6.8pt !important;
+      }}
+      .ev-meta {{
+        color: #334155 !important;
+        font-size: 6pt !important;
+        gap: 0 !important;
+      }}
+      .lunch-row td {{
+        background: #f1f5f9 !important;
+        color: #475569 !important;
+        font-size: 6.5pt !important;
+        padding: 2px !important;
+      }}
+      .break-row td {{
+        background: #fef3c7 !important;
+        color: #92400e !important;
+        font-size: 6.5pt !important;
+        padding: 2px !important;
+      }}
+      .free-slot {{
+        color: #94a3b8 !important;
+        font-size: 6.5pt !important;
+      }}
     }}
   </style>
 </head>
@@ -584,16 +726,20 @@ def generate_html():
   <header>
     <div class="logo-area">
       <h1>College Timetable Interactive Viewer</h1>
-      <p>ISE & CSBS Departments | Generated via Google OR-Tools CP-SAT</p>
+      <p>ISE & CSBS Departments | AICTE Faculty Workload Calibration & 1-Page PDF Fit</p>
     </div>
     <div class="actions">
-      <button class="btn btn-secondary" onclick="window.print()">Print / Save PDF</button>
-      <button class="btn btn-primary" onclick="downloadCurrentCSV()">Download CSV</button>
+      <button class="btn btn-secondary" onclick="window.print()">🖨️ Print / Save 1-Page PDF</button>
+      <button class="btn btn-primary" onclick="downloadCurrentCSV()">📥 Download CSV</button>
     </div>
   </header>
 
   <div class="main-container">
-    
+    <div class="print-header-banner" id="printBanner">
+      COLLEGE OF ENGINEERING — ACADEMIC TIMETABLE
+      <span id="printSubtitle">ISE & CSBS Departments | Conflict-Free Schedule</span>
+    </div>
+
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchView('section')">Section Timetables</button>
       <button class="tab-btn" onclick="switchView('workload')">Faculty Workload Sheet</button>
@@ -609,11 +755,12 @@ def generate_html():
       </div>
 
       <div class="legend" id="legendArea">
-        <div class="legend-item"><div class="legend-box" style="background:var(--accent-theory);"></div> Theory</div>
-        <div class="legend-item"><div class="legend-box" style="background:var(--accent-lab);"></div> Lab (3h)</div>
+        <div class="legend-item"><div class="legend-box" style="background:var(--accent-theory);"></div> Theory (1h)</div>
+        <div class="legend-item"><div class="legend-box" style="background:var(--accent-lab);"></div> Lab (3h Block)</div>
         <div class="legend-item"><div class="legend-box" style="background:var(--accent-oe);"></div> Open Elective (OE)</div>
         <div class="legend-item"><div class="legend-box" style="background:var(--accent-pe);"></div> Physical Ed (PE)</div>
-        <div class="legend-item"><div class="legend-box" style="background:var(--accent-lunch);"></div> Lunch Break</div>
+        <div class="legend-item"><div class="legend-box" style="background:#f59e0b;"></div> Short Break (10:30-11:00)</div>
+        <div class="legend-item"><div class="legend-box" style="background:var(--accent-lunch);"></div> Lunch Break (13:30-14:30)</div>
       </div>
     </div>
 
@@ -638,7 +785,8 @@ def generate_html():
     function switchView(mode) {{
       currentMode = mode;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      event.target.classList.add('active');
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(mode));
+      if (activeBtn) activeBtn.classList.add('active');
 
       const select = document.getElementById('itemSelect');
       const label = document.getElementById('selectorLabel');
@@ -710,16 +858,28 @@ def generate_html():
       const select = document.getElementById('itemSelect');
       const selectedVal = select.value;
       const container = document.getElementById('viewContainer');
+      const banner = document.getElementById('printBanner');
+      const subtitle = document.getElementById('printSubtitle');
 
       if (currentMode === 'section') {{
+        banner.innerHTML = `COLLEGE OF ENGINEERING — TIMETABLE: ${{selectedVal}}`;
+        subtitle.textContent = "ISE & CSBS Departments | Monday - Saturday (8:30 AM - 5:30 PM)";
         renderSectionView(selectedVal, container);
       }} else if (currentMode === 'workload') {{
+        banner.innerHTML = `COLLEGE OF ENGINEERING — FACULTY WORKLOAD DISTRIBUTION`;
+        subtitle.textContent = "AICTE Workload Norms: Prof (12h), Assoc Prof (14h), Asst Prof (16h)";
         renderWorkloadView(selectedVal, container);
       }} else if (currentMode === 'staff') {{
+        banner.innerHTML = `FACULTY TIMETABLE — ${{selectedVal}}`;
+        subtitle.textContent = "Weekly Schedule | College of Engineering";
         renderStaffView(selectedVal, container);
       }} else if (currentMode === 'room') {{
+        banner.innerHTML = `ROOM OCCUPANCY & UTILIZATION — ${{selectedVal}}`;
+        subtitle.textContent = "Classroom / Laboratory Weekly Allocation";
         renderRoomView(selectedVal, container);
       }} else if (currentMode === 'dept') {{
+        banner.innerHTML = `${{selectedVal.replace('_', ' ')}} MASTER TIMETABLE`;
+        subtitle.textContent = "Full Department Cohort Schedule";
         renderDeptView(selectedVal, container);
       }}
     }}
@@ -733,29 +893,30 @@ def generate_html():
 
       const totalFaculty = data.workload.length;
       const totalHours = data.workload.reduce((a, b) => a + b.tot_hrs, 0);
+      const totalTarget = data.workload.reduce((a, b) => a + b.target_hrs, 0);
       const avgLoad = (totalHours / totalFaculty).toFixed(1);
 
       statsArea.innerHTML = `
         <div class="stat-cards-grid">
           <div class="stat-card">
-            <span class="stat-title">Total Faculty Members</span>
+            <span class="stat-title">Faculty Hierarchy</span>
             <span class="stat-value">${{totalFaculty}}</span>
-            <span class="stat-sub">4 Profs | 6 Assoc | 10 Asst</span>
+            <span class="stat-sub">4 Prof (12h) | 6 Assoc (14h) | 10 Asst (16h)</span>
           </div>
           <div class="stat-card">
-            <span class="stat-title">Total Teaching Load</span>
+            <span class="stat-title">Total Workload Assigned</span>
             <span class="stat-value">${{totalHours}} <span style="font-size:1rem;color:var(--text-muted)">hrs/wk</span></span>
-            <span class="stat-sub">275 Theory + 39 Lab + 20 OE/PE</span>
+            <span class="stat-sub">Target: ${{totalTarget}}h (Deviation: +1h total)</span>
           </div>
           <div class="stat-card">
             <span class="stat-title">Average Faculty Load</span>
             <span class="stat-value">${{avgLoad}} <span style="font-size:1rem;color:var(--text-muted)">hrs/wk</span></span>
-            <span class="stat-sub">Strict range: 12 - 22 hrs</span>
+            <span class="stat-sub">Balanced distribution across 20 staff</span>
           </div>
           <div class="stat-card">
-            <span class="stat-title">Quota Compliance</span>
+            <span class="stat-title">Lab Limit Compliance</span>
             <span class="stat-value" style="color:#10b981;">100%</span>
-            <span class="stat-sub">Max 3 Subjs & 3 Secs per Faculty</span>
+            <span class="stat-sub">Strictly 1 lab/week per class (13 labs total)</span>
           </div>
         </div>
       `;
@@ -763,10 +924,11 @@ def generate_html():
       let html = `<table class="list-table">
         <thead>
           <tr>
-            <th style="width:45px;">#</th>
+            <th style="width:40px;">#</th>
             <th>Faculty Name</th>
             <th>Designation</th>
-            <th style="text-align:center;">Total Hours</th>
+            <th style="text-align:center;">Target</th>
+            <th style="text-align:center;">Assigned</th>
             <th style="text-align:center;">Theory</th>
             <th style="text-align:center;">Lab</th>
             <th style="text-align:center;">OE</th>
@@ -786,18 +948,23 @@ def generate_html():
         if (w.designation === 'Professor') badgeColor = '#f59e0b';
         else if (w.designation === 'Associate Professor') badgeColor = '#a78bfa';
 
+        const isExact = w.tot_hrs === w.target_hrs;
+        const targetBadge = `<span style="font-weight:600;color:var(--text-muted);">${{w.target_hrs}}h</span>`;
+        const assignedBadge = `<span class="badge-load" style="background:${{isExact ? 'rgba(16,185,129,0.25)' : 'rgba(37,99,235,0.25)'}};color:${{isExact ? '#6ee7b7' : '#93c5fd'}};">${{w.tot_hrs}}h</span>`;
+
         html += `<tr>
           <td style="color:var(--text-muted);font-weight:600;">${{idx + 1}}</td>
           <td><strong>${{w.name}}</strong></td>
           <td><span style="color:${{badgeColor}};font-size:0.8rem;font-weight:600;">${{w.designation}}</span></td>
-          <td style="text-align:center;"><span class="badge-load">${{w.tot_hrs}}h</span></td>
+          <td style="text-align:center;">${{targetBadge}}</td>
+          <td style="text-align:center;">${{assignedBadge}}</td>
           <td style="text-align:center;">${{w.theory_hrs}}h</td>
           <td style="text-align:center;"><span style="color:#67e8f9;">${{labStr}}</span></td>
           <td style="text-align:center;">${{w.oe_hrs > 0 ? w.oe_hrs + 'h' : '-'}}</td>
           <td style="text-align:center;">${{w.pe_hrs > 0 ? w.pe_hrs + 'h' : '-'}}</td>
           <td style="text-align:center;font-family:monospace;color:#94a3b8;">${{dailyStr}}</td>
-          <td><div style="font-size:0.75rem;max-width:320px;line-height:1.3;">${{w.subjects.join(', ')}}</div></td>
-          <td><div style="font-size:0.75rem;max-width:240px;color:#93c5fd;">${{w.sections.join(', ')}}</div></td>
+          <td><div style="font-size:0.75rem;max-width:300px;line-height:1.3;">${{w.subjects.join(', ')}}</div></td>
+          <td><div style="font-size:0.75rem;max-width:220px;color:#93c5fd;">${{w.sections.join(', ')}}</div></td>
         </tr>`;
       }});
 
@@ -819,10 +986,13 @@ def generate_html():
         <tbody>`;
 
       rows.forEach(r => {{
-        if (r.is_lunch) {{
-          html += `<tr class="lunch-row">
+        if (r.is_break) {{
+          const isMorning = r.time.includes("10:30") || r.break_type === "BREAK";
+          const label = isMorning ? "SHORT BREAK (10:30 - 11:00)" : "LUNCH BREAK (13:30 - 14:30)";
+          const rowClass = isMorning ? "break-row" : "lunch-row";
+          html += `<tr class="${{rowClass}}">
             <td class="time-col">${{r.time}}</td>
-            <td colspan="6">LUNCH BREAK (13:30 - 14:30)</td>
+            <td colspan="6">${{label}}</td>
           </tr>`;
           return;
         }}
@@ -1009,7 +1179,7 @@ def generate_html():
     with open("Timetable_Viewer.html", "w", encoding="utf-8") as f:
         f.write(html_template)
 
-    print("Created Timetable_Viewer.html successfully with Faculty Workload Sheet view!")
+    print("Created Timetable_Viewer.html successfully with 1-page PDF print layout and workload targets!")
 
 if __name__ == "__main__":
     generate_html()

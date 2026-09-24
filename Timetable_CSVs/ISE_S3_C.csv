@@ -1,0 +1,76 @@
+COLLEGE OF ENGINEERING - TIMETABLE: ISE_S3_C,,,,,,
+,,,,,,
+Time,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+08:30-09:30,"Data Structures
+[THEORY]
+Assistant Professor 7
+CR_2",FREE,"Database Management Systems
+[THEORY]
+Assistant Professor 2
+CR_1","Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_2",FREE,FREE
+09:30-10:30,FREE,FREE,"Computer Networks
+[THEORY]
+Associate Professor 1
+CR_1",FREE,"Computer Networks
+[THEORY]
+Associate Professor 1
+CR_2",FREE
+10:30-11:00,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK
+11:00-11:50,"Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_2","Data Structures
+[THEORY]
+Assistant Professor 7
+CR_2",FREE,"Database Management Systems
+[THEORY]
+Assistant Professor 2
+CR_2",FREE,"Mathematics for Computing
+[THEORY]
+Assistant Professor 7
+CR_2"
+11:50-12:40,FREE,"Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_2",FREE,"Data Structures
+[THEORY]
+Assistant Professor 7
+CR_1",FREE,"Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_2"
+12:40-13:30,FREE,FREE,"Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_2",FREE,FREE,FREE
+13:30-14:30,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK
+14:30-15:30,"Data Structures Lab
+[LAB]
+Assistant Professor 7
+LAB_1","Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_1","Computer Networks
+[THEORY]
+Associate Professor 1
+CR_1","Mathematics for Computing
+[THEORY]
+Assistant Professor 7
+CR_3",FREE,FREE
+15:30-16:30,"Data Structures Lab
+[LAB]
+Assistant Professor 7
+LAB_1",FREE,FREE,FREE,FREE,"Mathematics for Computing
+[THEORY]
+Assistant Professor 7
+CR_3"
+16:30-17:30,"Data Structures Lab
+[LAB]
+Assistant Professor 7
+LAB_1",FREE,FREE,FREE,FREE,"Database Management Systems
+[THEORY]
+Assistant Professor 2
+CR_2"

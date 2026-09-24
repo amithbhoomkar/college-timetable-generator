@@ -1,0 +1,88 @@
+COLLEGE OF ENGINEERING - TIMETABLE: ISE_S7_A,,,,,,
+,,,,,,
+Time,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+08:30-09:30,FREE,"Deep Learning
+[THEORY]
+Assistant Professor 6
+CR_4",FREE,FREE,FREE,"Project Management
+[THEORY]
+Assistant Professor 6
+CR_2"
+09:30-10:30,"Artificial Intelligence
+[OE]
+Associate Professor 3
+CR_6","Natural Language Processing
+[THEORY]
+Assistant Professor 6
+CR_2",FREE,FREE,"Artificial Intelligence
+[OE]
+Associate Professor 3
+CR_4",FREE
+10:30-11:00,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK
+11:00-11:50,FREE,FREE,FREE,"Natural Language Processing
+[THEORY]
+Assistant Professor 6
+CR_3","Distributed Systems
+[THEORY]
+Associate Professor 3
+CR_3",FREE
+11:50-12:40,"Deep Learning
+[THEORY]
+Assistant Professor 6
+CR_3",FREE,"Deep Learning
+[THEORY]
+Assistant Professor 6
+CR_3","Distributed Systems
+[THEORY]
+Associate Professor 3
+CR_4",FREE,"Big Data Analytics
+[THEORY]
+Professor 4
+CR_4"
+12:40-13:30,"Project Management
+[THEORY]
+Assistant Professor 6
+CR_2",FREE,"Project Management
+[THEORY]
+Assistant Professor 6
+CR_5",FREE,"Advanced Database Systems
+[THEORY]
+Associate Professor 3
+CR_2",FREE
+13:30-14:30,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK
+14:30-15:30,"Deep Learning Lab
+[LAB]
+Assistant Professor 3
+LAB_2","Physical Education
+[PE]
+Professor 4
+CR_5","Natural Language Processing
+[THEORY]
+Assistant Professor 6
+CR_3","Physical Education
+[PE]
+Professor 4
+CR_5","Advanced Database Systems
+[THEORY]
+Associate Professor 3
+CR_2",FREE
+15:30-16:30,"Deep Learning Lab
+[LAB]
+Assistant Professor 3
+LAB_2",FREE,"Distributed Systems
+[THEORY]
+Associate Professor 3
+CR_4","Advanced Database Systems
+[THEORY]
+Associate Professor 3
+CR_3",FREE,FREE
+16:30-17:30,"Deep Learning Lab
+[LAB]
+Assistant Professor 3
+LAB_2",FREE,"Big Data Analytics
+[THEORY]
+Professor 4
+CR_2","Big Data Analytics
+[THEORY]
+Professor 4
+CR_3",FREE,FREE

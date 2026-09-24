@@ -57,6 +57,14 @@ def generate_workload_sheets():
         else:
             return (3, int(name.split()[-1]))
 
+    def get_target_hours(desig):
+        if 'Professor' in desig and 'Associate' not in desig and 'Assistant' not in desig:
+            return 12
+        elif 'Associate' in desig:
+            return 14
+        else:
+            return 16
+
     sorted_teachers = sorted(staff_dict.keys(), key=sort_key)
 
     # 1. CREATE WORKLOAD EXCEL WORKBOOK
@@ -65,18 +73,25 @@ def generate_workload_sheets():
     ws.title = "TEACHER_WORKLOAD"
     ws.views.sheetView[0].showGridLines = True
 
+    # 1-Page Landscape Print Configuration
+    ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+    ws.page_setup.paperSize = ws.PAPERSIZE_A4
+    ws.page_setup.fitToPage = True
+    ws.page_setup.fitToWidth = 1
+    ws.page_setup.fitToHeight = 1
+    ws.sheet_properties.pageSetUpPr.fitToPage = True
+
     # Styling definitions
-    font_title = Font(name="Calibri", size=16, bold=True, color="1F4E79")
-    font_subtitle = Font(name="Calibri", size=11, italic=True, color="595959")
-    font_header = Font(name="Calibri", size=11, bold=True, color="FFFFFF")
-    font_bold = Font(name="Calibri", size=11, bold=True)
-    font_regular = Font(name="Calibri", size=11)
-    font_small = Font(name="Calibri", size=10, italic=True)
+    font_title = Font(name="Calibri", size=15, bold=True, color="1F4E79")
+    font_subtitle = Font(name="Calibri", size=10, italic=True, color="595959")
+    font_header = Font(name="Calibri", size=10, bold=True, color="FFFFFF")
+    font_bold = Font(name="Calibri", size=10, bold=True)
+    font_regular = Font(name="Calibri", size=10)
 
     fill_header = PatternFill(start_color="1F4E79", end_color="1F4E79", fill_type="solid")
     fill_day_header = PatternFill(start_color="2F5597", end_color="2F5597", fill_type="solid")
     fill_subtotal = PatternFill(start_color="D9E1F2", end_color="D9E1F2", fill_type="solid")
-    fill_zebra = PatternFill(start_color="F2F2F2", end_color="F2F2F2", fill_type="solid")
+    fill_zebra = PatternFill(start_color="F9FAFB", end_color="F9FAFB", fill_type="solid")
 
     thin_border_side = Side(style="thin", color="D9D9D9")
     border_data = Border(left=thin_border_side, right=thin_border_side, top=thin_border_side, bottom=thin_border_side)
@@ -94,26 +109,26 @@ def generate_workload_sheets():
     )
 
     # Title Banner
-    ws.merge_cells("A1:Q1")
+    ws.merge_cells("A1:R1")
     ws["A1"] = "COLLEGE OF ENGINEERING - FACULTY WORKLOAD DISTRIBUTION SHEET"
     ws["A1"].font = font_title
     ws["A1"].alignment = Alignment(horizontal="center", vertical="center")
-    ws.row_dimensions[1].height = 35
+    ws.row_dimensions[1].height = 30
 
-    ws.merge_cells("A2:Q2")
-    ws["A2"] = "Weekly Teaching Load Summary (Monday - Saturday) | ISE & CSBS Departments"
+    ws.merge_cells("A2:R2")
+    ws["A2"] = "Weekly Workload Norms (Prof: 12h, Assoc Prof: 14h, Asst Prof: 16h) | 1 Lab/Section/Week | ISE & CSBS"
     ws["A2"].font = font_subtitle
     ws["A2"].alignment = Alignment(horizontal="center", vertical="center")
-    ws.row_dimensions[2].height = 20
+    ws.row_dimensions[2].height = 18
 
     headers = [
-        "Sl No", "Faculty Name", "Designation", "Total Hours", 
+        "Sl No", "Faculty Name", "Designation", "Target (Hrs)", "Assigned (Hrs)", 
         "Theory (Hrs)", "Lab (Sessions)", "Lab (Hrs)", "OE (Hrs)", "PE (Hrs)",
         "Mon", "Tue", "Wed", "Thu", "Fri", "Sat",
         "Assigned Subjects", "Assigned Sections"
     ]
 
-    ws.row_dimensions[4].height = 28
+    ws.row_dimensions[4].height = 26
     for col_num, h in enumerate(headers, 1):
         cell = ws.cell(row=4, column=col_num)
         cell.value = h
@@ -126,6 +141,7 @@ def generate_workload_sheets():
             cell.fill = fill_header
 
     curr_row = 5
+    tot_target = 0
     tot_theory = 0
     tot_lab_sessions = 0
     tot_lab_hrs = 0
@@ -136,6 +152,8 @@ def generate_workload_sheets():
 
     for idx, t in enumerate(sorted_teachers, 1):
         d = staff_dict[t]
+        target_h = get_target_hours(d['designation'])
+        tot_target += target_h
         subj_str = ", ".join(sorted(d['subjects']))
         sec_str = ", ".join(sorted(d['sections']))
 
@@ -143,6 +161,7 @@ def generate_workload_sheets():
             idx,
             t,
             d['designation'],
+            target_h,
             d['tot_hrs'],
             d['theory_hrs'],
             d['lab_sessions'],
@@ -159,7 +178,7 @@ def generate_workload_sheets():
             sec_str
         ]
 
-        ws.row_dimensions[curr_row].height = 24
+        ws.row_dimensions[curr_row].height = 22
         is_zebra = (idx % 2 == 0)
 
         for col_num, val in enumerate(row_vals, 1):
@@ -171,14 +190,14 @@ def generate_workload_sheets():
             if is_zebra:
                 cell.fill = fill_zebra
 
-            if col_num in [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]:
+            if col_num in [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]:
                 cell.alignment = Alignment(horizontal="center", vertical="center")
             elif col_num in [2, 3]:
                 cell.alignment = Alignment(horizontal="left", vertical="center")
             else:
                 cell.alignment = Alignment(horizontal="left", vertical="center", wrap_text=False)
 
-            if col_num == 4:
+            if col_num in [4, 5]:
                 cell.font = font_bold
 
         grand_tot_hrs += d['tot_hrs']
@@ -193,9 +212,9 @@ def generate_workload_sheets():
         curr_row += 1
 
     # Total Row
-    ws.row_dimensions[curr_row].height = 26
+    ws.row_dimensions[curr_row].height = 25
     total_vals = [
-        "", "TOTAL / SUMMARY", f"{len(sorted_teachers)} Faculty", grand_tot_hrs,
+        "", "TOTAL / SUMMARY", f"{len(sorted_teachers)} Faculty", tot_target, grand_tot_hrs,
         tot_theory, tot_lab_sessions, tot_lab_hrs, tot_oe, tot_pe,
         day_totals['Monday'], day_totals['Tuesday'], day_totals['Wednesday'],
         day_totals['Thursday'], day_totals['Friday'], day_totals['Saturday'],
@@ -208,30 +227,31 @@ def generate_workload_sheets():
         cell.font = font_bold
         cell.fill = fill_subtotal
         cell.border = double_bottom
-        if col_num in [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]:
+        if col_num in [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]:
             cell.alignment = Alignment(horizontal="center", vertical="center")
         else:
             cell.alignment = Alignment(horizontal="left", vertical="center")
 
-    # Column widths
+    # Column widths optimized for 1-page landscape fit
     col_widths = {
-        1: 8,   # Sl No
-        2: 26,  # Faculty Name
-        3: 22,  # Designation
-        4: 13,  # Total Hours
-        5: 14,  # Theory
-        6: 14,  # Lab Sessions
-        7: 12,  # Lab Hrs
-        8: 10,  # OE Hrs
-        9: 10,  # PE Hrs
-        10: 8,  # Mon
-        11: 8,  # Tue
-        12: 8,  # Wed
-        13: 8,  # Thu
-        14: 8,  # Fri
-        15: 8,  # Sat
-        16: 45, # Subjects
-        17: 35  # Sections
+        1: 6,   # Sl No
+        2: 24,  # Faculty Name
+        3: 20,  # Designation
+        4: 12,  # Target (Hrs)
+        5: 14,  # Assigned (Hrs)
+        6: 12,  # Theory
+        7: 12,  # Lab Sessions
+        8: 10,  # Lab Hrs
+        9: 9,   # OE Hrs
+        10: 9,  # PE Hrs
+        11: 7,  # Mon
+        12: 7,  # Tue
+        13: 7,  # Wed
+        14: 7,  # Thu
+        15: 7,  # Fri
+        16: 7,  # Sat
+        17: 35, # Subjects
+        18: 26  # Sections
     }
     for col_idx, width in col_widths.items():
         ws.column_dimensions[get_column_letter(col_idx)].width = width
@@ -248,7 +268,13 @@ def generate_workload_sheets():
         del wb_master["TEACHER_WORKLOAD"]
     # Copy sheet to wb_master
     ws_new = wb_master.create_sheet(title="TEACHER_WORKLOAD", index=0)
-    # copy rows and styling
+    ws_new.page_setup.orientation = ws_new.ORIENTATION_LANDSCAPE
+    ws_new.page_setup.paperSize = ws_new.PAPERSIZE_A4
+    ws_new.page_setup.fitToPage = True
+    ws_new.page_setup.fitToWidth = 1
+    ws_new.page_setup.fitToHeight = 1
+    ws_new.sheet_properties.pageSetUpPr.fitToPage = True
+
     for r in range(1, ws.max_row + 1):
         ws_new.row_dimensions[r].height = ws.row_dimensions[r].height
         for c in range(1, ws.max_column + 1):
@@ -264,8 +290,8 @@ def generate_workload_sheets():
     for col_idx, width in col_widths.items():
         ws_new.column_dimensions[get_column_letter(col_idx)].width = width
     ws_new.views.sheetView[0].showGridLines = True
-    ws_new.merge_cells("A1:Q1")
-    ws_new.merge_cells("A2:Q2")
+    ws_new.merge_cells("A1:R1")
+    ws_new.merge_cells("A2:R2")
     wb_master.save("Complete_Timetable.xlsx")
     print("Updated Complete_Timetable.xlsx with TEACHER_WORKLOAD tab at position 1.")
 
@@ -276,8 +302,9 @@ def generate_workload_sheets():
         writer.writerow(headers)
         for idx, t in enumerate(sorted_teachers, 1):
             d = staff_dict[t]
+            target_h = get_target_hours(d['designation'])
             writer.writerow([
-                idx, t, d['designation'], d['tot_hrs'],
+                idx, t, d['designation'], target_h, d['tot_hrs'],
                 d['theory_hrs'], d['lab_sessions'], d['lab_hrs'], d['oe_hrs'], d['pe_hrs'],
                 d['days']['Monday'], d['days']['Tuesday'], d['days']['Wednesday'],
                 d['days']['Thursday'], d['days']['Friday'], d['days']['Saturday'],
@@ -291,22 +318,27 @@ def generate_workload_sheets():
     md_path = "Timetable_Text_Views/TEACHER_WORKLOAD.md"
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("# FACULTY WORKLOAD DISTRIBUTION SHEET\n\n")
-        f.write("**Weekly Teaching Hours Summary (Monday to Saturday)**\n\n")
-        f.write("| Sl | Faculty Name | Designation | Total Hrs | Theory | Lab (Hrs) | OE | PE | Mon | Tue | Wed | Thu | Fri | Sat | Subjects Handled | Sections |\n")
-        f.write("|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---|\n")
+        f.write("**Weekly Teaching Hours Summary (Monday to Saturday) - AICTE Workload Norms**\n\n")
+        f.write("- **Professor Norm**: 12 Hours / Week\n")
+        f.write("- **Associate Professor Norm**: 14 Hours / Week\n")
+        f.write("- **Assistant Professor Norm**: 16 Hours / Week\n\n")
+        f.write("| Sl | Faculty Name | Designation | Target | Assigned | Theory | Lab (Hrs) | OE | PE | Mon | Tue | Wed | Thu | Fri | Sat | Subjects Handled | Sections |\n")
+        f.write("|:---:|:---|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---|:---|\n")
 
         for idx, t in enumerate(sorted_teachers, 1):
             d = staff_dict[t]
+            target_h = get_target_hours(d['designation'])
             lab_col = f"{d['lab_sessions']} ({d['lab_hrs']}h)" if d['lab_sessions'] > 0 else "-"
-            f.write(f"| {idx} | **{t}** | {d['designation']} | **{d['tot_hrs']}** | {d['theory_hrs']} | {lab_col} | {d['oe_hrs']} | {d['pe_hrs']} | {d['days']['Monday']} | {d['days']['Tuesday']} | {d['days']['Wednesday']} | {d['days']['Thursday']} | {d['days']['Friday']} | {d['days']['Saturday']} | {', '.join(sorted(d['subjects']))} | {', '.join(sorted(d['sections']))} |\n")
+            f.write(f"| {idx} | **{t}** | {d['designation']} | {target_h}h | **{d['tot_hrs']}h** | {d['theory_hrs']} | {lab_col} | {d['oe_hrs']} | {d['pe_hrs']} | {d['days']['Monday']} | {d['days']['Tuesday']} | {d['days']['Wednesday']} | {d['days']['Thursday']} | {d['days']['Friday']} | {d['days']['Saturday']} | {', '.join(sorted(d['subjects']))} | {', '.join(sorted(d['sections']))} |\n")
 
-        f.write(f"| | **TOTAL** | **20 Faculty** | **{grand_tot_hrs}** | **{tot_theory}** | **{tot_lab_sessions} ({tot_lab_hrs}h)** | **{tot_oe}** | **{tot_pe}** | **{day_totals['Monday']}** | **{day_totals['Tuesday']}** | **{day_totals['Wednesday']}** | **{day_totals['Thursday']}** | **{day_totals['Friday']}** | **{day_totals['Saturday']}** | - | - |\n\n")
+        f.write(f"| | **TOTAL** | **20 Faculty** | **{tot_target}h** | **{grand_tot_hrs}h** | **{tot_theory}** | **{tot_lab_sessions} ({tot_lab_hrs}h)** | **{tot_oe}** | **{tot_pe}** | **{day_totals['Monday']}** | **{day_totals['Tuesday']}** | **{day_totals['Wednesday']}** | **{day_totals['Thursday']}** | **{day_totals['Friday']}** | **{day_totals['Saturday']}** | - | - |\n\n")
 
         f.write("## Detailed Faculty-Wise Subject Breakdown\n\n")
         for t in sorted_teachers:
             d = staff_dict[t]
+            target_h = get_target_hours(d['designation'])
             f.write(f"### {t} ({d['designation']})\n")
-            f.write(f"- **Total Weekly Workload**: {d['tot_hrs']} Hours (Theory: {d['theory_hrs']}h, Lab: {d['lab_hrs']}h, OE: {d['oe_hrs']}h, PE: {d['pe_hrs']}h)\n")
+            f.write(f"- **Target Workload**: {target_h} Hours/Week | **Assigned**: {d['tot_hrs']} Hours/Week (Theory: {d['theory_hrs']}h, Lab: {d['lab_hrs']}h, OE: {d['oe_hrs']}h, PE: {d['pe_hrs']}h)\n")
             day_str = ", ".join([f"{day[:3]}: {d['days'][day]}h" for day in DAYS])
             f.write(f"- **Day-wise**: {day_str}\n")
             f.write("- **Courses Taught**:\n")

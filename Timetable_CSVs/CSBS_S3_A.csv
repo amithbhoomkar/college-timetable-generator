@@ -1,0 +1,76 @@
+COLLEGE OF ENGINEERING - TIMETABLE: CSBS_S3_A,,,,,,
+,,,,,,
+Time,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+08:30-09:30,FREE,"Database Systems
+[THEORY]
+Assistant Professor 2
+CR_5",FREE,FREE,FREE,FREE
+09:30-10:30,FREE,"Probability and Statistics
+[THEORY]
+Associate Professor 4
+CR_3","Database Systems
+[THEORY]
+Assistant Professor 2
+CR_3",FREE,FREE,FREE
+10:30-11:00,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK
+11:00-11:50,FREE,FREE,"Database Systems
+[THEORY]
+Assistant Professor 2
+CR_5",FREE,FREE,"Data Structures Lab
+[LAB]
+Professor 1
+LAB_1"
+11:50-12:40,FREE,"Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_5",FREE,"Probability and Statistics
+[THEORY]
+Associate Professor 4
+CR_6","Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_5","Data Structures Lab
+[LAB]
+Professor 1
+LAB_1"
+12:40-13:30,FREE,FREE,FREE,"Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_5","Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_3","Data Structures Lab
+[LAB]
+Professor 1
+LAB_1"
+13:30-14:30,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK
+14:30-15:30,FREE,FREE,FREE,"Probability and Statistics
+[THEORY]
+Associate Professor 4
+CR_4","Data Structures
+[THEORY]
+Assistant Professor 1
+CR_3","Data Structures
+[THEORY]
+Assistant Professor 1
+CR_2"
+15:30-16:30,"Data Structures
+[THEORY]
+Assistant Professor 1
+CR_3",FREE,FREE,FREE,"Object Oriented Programming
+[THEORY]
+Associate Professor 4
+CR_5","Computer Networks
+[THEORY]
+Professor 1
+CR_6"
+16:30-17:30,"Computer Networks
+[THEORY]
+Professor 1
+CR_3",FREE,FREE,FREE,"Operating Systems
+[THEORY]
+Assistant Professor 2
+CR_4","Computer Networks
+[THEORY]
+Professor 1
+CR_4"

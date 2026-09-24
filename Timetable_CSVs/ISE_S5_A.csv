@@ -1,0 +1,88 @@
+COLLEGE OF ENGINEERING - TIMETABLE: ISE_S5_A,,,,,,
+,,,,,,
+Time,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday
+08:30-09:30,FREE,"Software Engineering
+[THEORY]
+Assistant Professor 4
+CR_3",FREE,FREE,"Web Technology
+[THEORY]
+Assistant Professor 8
+CR_2",FREE
+09:30-10:30,"Web Technology
+[THEORY]
+Assistant Professor 8
+CR_2","Artificial Intelligence
+[OE]
+Associate Professor 6
+CR_5",FREE,"Artificial Intelligence
+[OE]
+Associate Professor 6
+CR_4","Data Mining
+[THEORY]
+Professor 3
+CR_3",FREE
+10:30-11:00,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK,SHORT BREAK
+11:00-11:50,"Information Security
+[THEORY]
+Assistant Professor 8
+CR_3","Machine Learning
+[THEORY]
+Assistant Professor 9
+CR_3","Machine Learning
+[THEORY]
+Assistant Professor 9
+CR_1",FREE,"Cloud Computing
+[THEORY]
+Assistant Professor 9
+CR_2",FREE
+11:50-12:40,"Information Security
+[THEORY]
+Assistant Professor 8
+CR_2",FREE,"Data Mining
+[THEORY]
+Professor 3
+CR_1","Cloud Computing
+[THEORY]
+Assistant Professor 9
+CR_2",FREE,"Software Engineering
+[THEORY]
+Assistant Professor 4
+CR_3"
+12:40-13:30,"Cloud Computing
+[THEORY]
+Assistant Professor 9
+CR_1",FREE,"Web Technology
+[THEORY]
+Assistant Professor 8
+CR_3",FREE,FREE,FREE
+13:30-14:30,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK,LUNCH BREAK
+14:30-15:30,"Machine Learning
+[THEORY]
+Assistant Professor 9
+CR_1",FREE,"Physical Education
+[PE]
+Associate Professor 6
+CR_5",FREE,"Machine Learning Lab
+[LAB]
+Associate Professor 6
+LAB_1","Physical Education
+[PE]
+Associate Professor 6
+CR_3"
+15:30-16:30,FREE,FREE,"Information Security
+[THEORY]
+Assistant Professor 8
+CR_3",FREE,"Machine Learning Lab
+[LAB]
+Associate Professor 6
+LAB_1","Software Engineering
+[THEORY]
+Assistant Professor 4
+CR_4"
+16:30-17:30,FREE,FREE,FREE,FREE,"Machine Learning Lab
+[LAB]
+Associate Professor 6
+LAB_1","Data Mining
+[THEORY]
+Professor 3
+CR_3"
